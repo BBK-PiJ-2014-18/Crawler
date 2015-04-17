@@ -64,6 +64,8 @@ public class WebCrawlerTest {
 
 	// TESTS START HERE
 	
+	//getting base ref from a starting URL
+	
 	@Test
 	public void testCreatingBaseUrlFromStartingUrl() {
 		WebCrawler wc = new WebCrawler();
@@ -118,4 +120,31 @@ public class WebCrawlerTest {
 		assertEquals(expected, actual);
 	}
 
+	@Test
+	public void testCreatingBaseUrlFromStartingUrlWithValidDotsInPlaceOtherThanFinalFileName() {
+		WebCrawler wc = new WebCrawler();
+		wc.crawl(helpMakeURL("http://www.dcs.bbk.ac.uk/seminars/../about/map.php"));
+		String actual = helpReadDataFileLine(3);
+		String expected = "START BASE = http://www.dcs.bbk.ac.uk/about/";
+		assertEquals(expected, actual);
+	}
+	
+	@Test
+	public void testCreatingBaseUrlFromStartingUrlWithValidDotsInPlaceAndNoFinalFileName() {
+		WebCrawler wc = new WebCrawler();
+		wc.crawl(helpMakeURL("http://www.dcs.bbk.ac.uk/seminars/../about/"));
+		String actual = helpReadDataFileLine(3);
+		String expected = "START BASE = http://www.dcs.bbk.ac.uk/about/";
+		assertEquals(expected, actual);
+	}
+	
+	@Test
+	public void testCreatingBaseUrlFromStartingUrlWithValidDotsInPlaceAndNoFinalFileNameNoFinalSlash() {
+		WebCrawler wc = new WebCrawler();
+		wc.crawl(helpMakeURL("http://www.dcs.bbk.ac.uk/seminars/../about"));
+		String actual = helpReadDataFileLine(3);
+		String expected = "START BASE = http://www.dcs.bbk.ac.uk/about/";
+		assertEquals(expected, actual);
+	}
+	
 }
