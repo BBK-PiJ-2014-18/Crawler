@@ -7,7 +7,9 @@ import java.io.Reader;
 import java.net.MalformedURLException;
 import java.net.URL;
 
+import org.junit.Ignore;
 import org.junit.Test;
+
 import static org.junit.Assert.assertEquals;
 
 public class WebCrawlerTest {
@@ -88,5 +90,34 @@ public class WebCrawlerTest {
 		String expected = "START BASE = http://www.dcs.bbk.ac.uk/";
 		assertEquals(expected, actual);
 	}
+
+	@Test
+	public void testCreatingBaseUrlFromMoreComplexStartingUrl() {
+		WebCrawler wc = new WebCrawler();
+		wc.crawl(helpMakeURL("http://www.dcs.bbk.ac.uk/seminars/"));
+		String actual = helpReadDataFileLine(3);
+		String expected = "START BASE = http://www.dcs.bbk.ac.uk/seminars/";
+		assertEquals(expected, actual);
+	}	
 	
+	@Test
+	public void testCreatingBaseUrlFromMoreComplexStartingUrlNoFinalFowardSlash() {
+		WebCrawler wc = new WebCrawler();
+		wc.crawl(helpMakeURL("http://www.dcs.bbk.ac.uk/seminars"));
+		String actual = helpReadDataFileLine(3);
+		String expected = "START BASE = http://www.dcs.bbk.ac.uk/seminars/";
+		assertEquals(expected, actual);
+	}	
+
+	@Test
+	public void testCreatingBaseUrlFromMoreComplexStartingUrlWithIndex() {
+		WebCrawler wc = new WebCrawler();
+		wc.crawl(helpMakeURL("http://www.dcs.bbk.ac.uk/seminars/index-external.php"));
+		String actual = helpReadDataFileLine(3);
+		String expected = "START BASE = http://www.dcs.bbk.ac.uk/seminars/";
+		assertEquals(expected, actual);
+	}
+
+	
+
 }
