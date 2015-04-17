@@ -10,10 +10,13 @@ public class WebCrawler {
 //	Local copy of dcs html (when offline) is at "file:./Crawler/TestHtml/test.html";
 	
 	public void crawl(URL startingURL)  {
-		// need to do the exceptions here properly
+		if(startingURL == null){
+			throw new NullPointerException("URL may not be null");
+		}
 		URL base = makeBase(startingURL);
 		DatabaseManager dm = new DatabaseManager();
 		dm.saveCrawlAttributes(startingURL, base);
+		// need to do the exceptions are done right - check PiJ notes examples
 		InputStream inputStream;
 		try {
 			inputStream = startingURL.openStream();

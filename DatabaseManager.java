@@ -3,11 +3,8 @@ import java.io.FileNotFoundException;
 import java.io.PrintWriter;
 import java.net.URL;
 
-
-
 public class DatabaseManager {
 	
-
 	private static final String DATABASE_FILE = "./Crawler/crawloutput.txt";
 
 	// or return boolean?

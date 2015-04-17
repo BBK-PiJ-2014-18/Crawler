@@ -8,13 +8,22 @@ import java.net.MalformedURLException;
 import java.net.URL;
 
 import org.junit.Ignore;
+import org.junit.Rule;
 import org.junit.Test;
+import org.junit.rules.ExpectedException;
 
 import static org.junit.Assert.assertEquals;
 
 public class WebCrawlerTest {
 
 	private static final String DATABASE_FILE = "./Crawler/crawloutput.txt";
+	
+	// RULE
+	
+	@Rule
+	public ExpectedException thrown = ExpectedException.none();
+	
+	// HELPER METHODS
 	
 	private URL helpMakeURL(String str) {
 		URL result = null;
@@ -63,6 +72,14 @@ public class WebCrawlerTest {
 	
 
 	// TESTS START HERE
+	
+	@Test
+	public void testStartingURLMayNotBeNull() {
+		WebCrawler wc = new WebCrawler();
+		thrown.expect(NullPointerException.class);
+		thrown.expectMessage("URL may not be null");
+		wc.crawl(null);
+	}
 	
 	//getting base ref from a starting URL
 	
