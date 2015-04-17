@@ -7,9 +7,7 @@ import java.net.URL;
 
 public class WebCrawler {
 
-//	private static final String STARTING_URL = "http://www.dcs.bbk.ac.uk/index.php";
-//	private static final String STARTING_URL = "http://www.dcs.bbk.ac.uk/";
-//	private static final String STARTING_URL = "http://www.dcs.bbk.ac.uk";
+
 //	private static final String STARTING_URL = "http://www.dcs.bbk.ac.uk/seminars/index-external.php";
 //	private static final String STARTING_URL = "http://www.dcs.bbk.ac.uk/seminars/";
 //	private static final String STARTING_URL = "http://www.dcs.bbk.ac.uk/seminars";
@@ -45,6 +43,8 @@ public class WebCrawler {
 		String path = startingURL.getPath();
 		if(path.contains("/")) {
 			path = path.substring(0, path.lastIndexOf('/') + 1);			
+		} else {
+			path = path + '/';
 		}
 		URL result = null;
 		try {
@@ -52,10 +52,10 @@ public class WebCrawler {
 		} catch (MalformedURLException e) {
 			e.printStackTrace();
 		}
-//		result = cleanURL(result);
+		result = cleanURL(result);
 		return result;
 	}	
-/*	
+	
 	private URL cleanURL(URL dirtyURL) {
 		URL result = null;
 		try {
@@ -70,7 +70,7 @@ public class WebCrawler {
 		}
 		return result;
 	}
-*/	
+	
 	private URL makeFullUrl(String scrapedString, URL base) {
 		URL result = null;
 		if(scrapedString.charAt(0) == '/') {
