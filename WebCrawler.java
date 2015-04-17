@@ -37,11 +37,13 @@ public class WebCrawler {
 		String protocol = startingURL.getProtocol();
 		String host = startingURL.getHost();
 		String path = startingURL.getPath();
-		if(!path.contains(".")) {
+		if(path.contains("/") && !path.substring(path.lastIndexOf('/'), path.length()).contains(".")) {
 			path = path + '/';
 		}
 		if(path.contains("/")) {
 			path = path.substring(0, path.lastIndexOf('/') + 1);
+		} else {
+			path = path + '/';
 		}
 		URL result = null;
 		try {
