@@ -146,5 +146,4 @@ public class WebCrawlerTest {
 		String expected = "START BASE = http://www.dcs.bbk.ac.uk/about/";
 		assertEquals(expected, actual);
 	}
-	
 }

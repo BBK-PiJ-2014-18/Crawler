@@ -7,7 +7,7 @@ import java.net.URL;
 
 public class WebCrawler {
 
-//	private static final String STARTING_URL = "file:./Crawler/TestHtml/test.html";
+//	Local copy of dcs html (when offline) is at "file:./Crawler/TestHtml/test.html";
 	
 	public void crawl(URL startingURL)  {
 		// need to do the exceptions here properly
@@ -34,35 +34,39 @@ public class WebCrawler {
 	}
 
 	private URL makeBase(URL startingURL) {
-		String protocol = startingURL.getProtocol();
-		String host = startingURL.getHost();
-		String path = startingURL.getPath();
-		if(path.contains("/") && !path.substring(path.lastIndexOf('/'), path.length()).contains(".")) {
+		String protocol = startingURL.getProtocol(); 	// e.g. "http"
+		String host = startingURL.getHost(); 			// e.g. "www.dcs.bbk.ac.uk"
+		String path = startingURL.getPath();			// e.g. "/seminars/index-external.php"
+		
+		//if there is no path (e.g address is just host) then make path = "/"
+		if(path == "") {
+			path = "/";
+		}
+		//if there is no file name (e.g. just "/seminars" has "/" added to complete as "/seminars/"
+		if(!path.substring(path.lastIndexOf('/'), path.length()).contains(".")) {
 			path = path + '/';
 		}
-		if(path.contains("/")) {
-			path = path.substring(0, path.lastIndexOf('/') + 1);
-		} else {
-			path = path + '/';
-		}
+		//delete any file name from end of path
+		path = path.substring(0, path.lastIndexOf('/') + 1);
 		URL result = null;
 		try {
 			result = new URL(protocol, host, path);
 		} catch (MalformedURLException e) {
 			e.printStackTrace();
 		}
-		result = cleanURL(result);
+		//remove any  duplicate "/"s added above
+		result = normalizeURL(result);
 		return result;
 	}	
 
 	
-	private URL cleanURL(URL dirtyURL) {
+	private URL normalizeURL(URL dirtyURL) {
 		URL result = null;
 		try {
 			URI temp = dirtyURL.toURI();
 			temp = temp.normalize();
 			result = temp.toURL();
-			//what order should these be in??
+			//what order should these catches be in??
 		} catch (URISyntaxException ex) {
 			ex.printStackTrace();			
 		} catch (MalformedURLException ex) {
