@@ -118,6 +118,4 @@ public class WebCrawlerTest {
 		assertEquals(expected, actual);
 	}
 
-	
-
 }

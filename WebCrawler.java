@@ -7,10 +7,6 @@ import java.net.URL;
 
 public class WebCrawler {
 
-
-//	private static final String STARTING_URL = "http://www.dcs.bbk.ac.uk/seminars/index-external.php";
-//	private static final String STARTING_URL = "http://www.dcs.bbk.ac.uk/seminars/";
-//	private static final String STARTING_URL = "http://www.dcs.bbk.ac.uk/seminars";
 //	private static final String STARTING_URL = "file:./Crawler/TestHtml/test.html";
 	
 	public void crawl(URL startingURL)  {
@@ -27,7 +23,7 @@ public class WebCrawler {
 			while((scrapedString = findURL(inputStream)) != null) {
 				count ++;
 				result = makeFullUrl(scrapedString, base);
-				System.out.println(count + " " + result.toString());
+//				System.out.println(count + " " + result.toString());
 			}
 			inputStream.close();
 		} catch (IOException e) {
@@ -41,10 +37,11 @@ public class WebCrawler {
 		String protocol = startingURL.getProtocol();
 		String host = startingURL.getHost();
 		String path = startingURL.getPath();
-		if(path.contains("/")) {
-			path = path.substring(0, path.lastIndexOf('/') + 1);			
-		} else {
+		if(!path.contains(".")) {
 			path = path + '/';
+		}
+		if(path.contains("/")) {
+			path = path.substring(0, path.lastIndexOf('/') + 1);
 		}
 		URL result = null;
 		try {
@@ -55,6 +52,7 @@ public class WebCrawler {
 		result = cleanURL(result);
 		return result;
 	}	
+
 	
 	private URL cleanURL(URL dirtyURL) {
 		URL result = null;
