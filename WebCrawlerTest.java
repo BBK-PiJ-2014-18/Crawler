@@ -70,4 +70,23 @@ public class WebCrawlerTest {
 		String expected = "START BASE = http://www.dcs.bbk.ac.uk/";
 		assertEquals(expected, actual);
 	}
+	
+	@Test
+	public void testCreatingBaseUrlFromStartingUrlNoFinalFowardSlash() {
+		WebCrawler wc = new WebCrawler();
+		wc.crawl(helpMakeURL("http://www.dcs.bbk.ac.uk"));
+		String actual = helpReadDataFileLine(3);
+		String expected = "START BASE = http://www.dcs.bbk.ac.uk/";
+		assertEquals(expected, actual);
+	}
+	
+	@Test
+	public void testCreatingBaseUrlFromStartingUrlWithIndex() {
+		WebCrawler wc = new WebCrawler();
+		wc.crawl(helpMakeURL("http://www.dcs.bbk.ac.uk/index.php"));
+		String actual = helpReadDataFileLine(3);
+		String expected = "START BASE = http://www.dcs.bbk.ac.uk/";
+		assertEquals(expected, actual);
+	}
+	
 }
