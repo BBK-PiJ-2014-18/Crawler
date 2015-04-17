@@ -2,11 +2,10 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.lang.Character;
 
-
 public class HTMLread {
 	
 		/**
-		 * 
+		 * 		  
 		 * @param inputStream
 		 * @param ch1, the char to read until
 		 * @param ch2, the end of file char ?? [(char) -1]
@@ -53,10 +52,9 @@ public class HTMLread {
 		 * @param ch1, the char that marks the end of the URL
 		 * @param ch2, the char that represents EOF
 		 * @return the URL, or null if EOF is reached
-		 */
-		
+		 */		
 		public String readString(InputStream inputStream, char ch1, char ch2) {
-			String result = "\"";
+			String result = "";
 			char aChar;
 			try {	
 				while((aChar = (char) inputStream.read()) != ch1) {
@@ -68,6 +66,6 @@ public class HTMLread {
 			} catch (IOException e) {
 				e.printStackTrace();
 			}
-			return result + '"';
+			return result;
 		}
 }
