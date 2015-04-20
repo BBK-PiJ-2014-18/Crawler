@@ -258,7 +258,35 @@ public class WebCrawlerTest {
 		assertEquals(expected, actual);
 	}
 
+	// tests dealing with a reference element in a URL (i.e. to remove a #nav or #content)
 	
+	@Test
+	public void testRemoveReferenceFromURLnoPathOnlyHost() {
+		WebCrawler wc = new WebCrawler();
+		wc.crawl(helpMakeURL("http://www.dcs.bbk.ac.uk/#content"));
+		String actual = helpReadDataFileLine(2);
+		String expected = "STARTING URL = http://www.dcs.bbk.ac.uk/";
+		assertEquals(expected, actual);
+		actual = helpReadDataFileLine(3);
+		expected = "START BASE = http://www.dcs.bbk.ac.uk/";
+		assertEquals(expected, actual);
+	}	
+
+	@Test
+	public void testRemoveReferenceFromURLwithHostAndPatht() {
+		WebCrawler wc = new WebCrawler();
+		wc.crawl(helpMakeURL("http://www.dcs.bbk.ac.uk/news/index.php#n708"));
+		String actual = helpReadDataFileLine(2);
+		String expected = "STARTING URL = http://www.dcs.bbk.ac.uk/news/index.php";
+		assertEquals(expected, actual);
+		actual = helpReadDataFileLine(3);
+		expected = "START BASE = http://www.dcs.bbk.ac.uk/news/";
+		assertEquals(expected, actual);
+	}
+
+	//and then what about these ?s !?!
+	
+//	https://www.dcs.bbk.ac.uk/courses/bbkquality.php?from=pgcourses
 	
 }
 
