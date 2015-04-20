@@ -81,6 +81,39 @@ public class WebCrawlerTest {
 		wc.crawl(null);
 	}
 	
+	//come back to this when set up wider sequence
+	@ Ignore @Test
+	public void testStartingURLValidButDoesNotExist() {
+		WebCrawler wc = new WebCrawler();
+		wc.crawl(helpMakeURL("http://www.dcs.bbk.ac.uk/monkeys.html"));
+	}
+
+	@Test
+	public void testNormaliseStartingURL() {
+		WebCrawler wc = new WebCrawler();
+		wc.crawl(helpMakeURL("http://www.dcs.bbk.ac.uk//about"));
+		String actual = helpReadDataFileLine(2);
+		String expected = "STARTING URL = http://www.dcs.bbk.ac.uk/about/";
+		assertEquals(expected, actual);		
+		actual = helpReadDataFileLine(3);
+		expected = "START BASE = http://www.dcs.bbk.ac.uk/about/";
+		assertEquals(expected, actual);
+	}
+	
+	@Test
+	public void testMakeComplexStatingURLsaveClean() {
+		WebCrawler wc = new WebCrawler();
+		wc.crawl(helpMakeURL("http://www.dcs.bbk.ac.uk/seminars/../about/"));
+		String actual = helpReadDataFileLine(2);
+		String expected = "STARTING URL = http://www.dcs.bbk.ac.uk/about/";
+		assertEquals(expected, actual);		
+		actual = helpReadDataFileLine(3);
+		expected = "START BASE = http://www.dcs.bbk.ac.uk/about/";
+		assertEquals(expected, actual);
+	}
+	
+	
+	
 	//getting base ref from a starting URL
 	
 	@Test
@@ -163,4 +196,6 @@ public class WebCrawlerTest {
 		String expected = "START BASE = http://www.dcs.bbk.ac.uk/about/";
 		assertEquals(expected, actual);
 	}
+	
+
 }
