@@ -87,6 +87,8 @@ public class WebCrawlerTest {
 		WebCrawler wc = new WebCrawler();
 		wc.crawl(helpMakeURL("http://www.dcs.bbk.ac.uk/monkeys.html"));
 	}
+	
+	//tests on cleaning startingURL so saves clean for checking of duplicates
 
 	@Test
 	public void testNormaliseStartingURL() {
@@ -97,6 +99,30 @@ public class WebCrawlerTest {
 		assertEquals(expected, actual);		
 		actual = helpReadDataFileLine(3);
 		expected = "START BASE = http://www.dcs.bbk.ac.uk/about/";
+		assertEquals(expected, actual);
+	}
+	
+	@Test
+	public void testNormaliseStartingURLjustHost() {
+		WebCrawler wc = new WebCrawler();
+		wc.crawl(helpMakeURL("http://www.dcs.bbk.ac.uk"));
+		String actual = helpReadDataFileLine(2);
+		String expected = "STARTING URL = http://www.dcs.bbk.ac.uk/";
+		assertEquals(expected, actual);		
+		actual = helpReadDataFileLine(3);
+		expected = "START BASE = http://www.dcs.bbk.ac.uk/";
+		assertEquals(expected, actual);
+	}
+	
+	@Test
+	public void testNormaliseStartingURLjustHostwithForwardSlashAtEnd() {
+		WebCrawler wc = new WebCrawler();
+		wc.crawl(helpMakeURL("http://www.dcs.bbk.ac.uk/"));
+		String actual = helpReadDataFileLine(2);
+		String expected = "STARTING URL = http://www.dcs.bbk.ac.uk/";
+		assertEquals(expected, actual);		
+		actual = helpReadDataFileLine(3);
+		expected = "START BASE = http://www.dcs.bbk.ac.uk/";
 		assertEquals(expected, actual);
 	}
 	
@@ -112,6 +138,29 @@ public class WebCrawlerTest {
 		assertEquals(expected, actual);
 	}
 	
+	@Test
+	public void testNormaliseStartingURLwithFileNameAtEndOfURL() {
+		WebCrawler wc = new WebCrawler();
+		wc.crawl(helpMakeURL("http://www.dcs.bbk.ac.uk//about/map.php"));
+		String actual = helpReadDataFileLine(2);
+		String expected = "STARTING URL = http://www.dcs.bbk.ac.uk/about/map.php";
+		assertEquals(expected, actual);		
+		actual = helpReadDataFileLine(3);
+		expected = "START BASE = http://www.dcs.bbk.ac.uk/about/";
+		assertEquals(expected, actual);
+	}
+	
+	@Test
+	public void testMakeComplexStatingURLsaveCleanwithFileNameAtEndOfURL() {
+		WebCrawler wc = new WebCrawler();
+		wc.crawl(helpMakeURL("http://www.dcs.bbk.ac.uk/seminars/../about/map.php"));
+		String actual = helpReadDataFileLine(2);
+		String expected = "STARTING URL = http://www.dcs.bbk.ac.uk/about/map.php";
+		assertEquals(expected, actual);		
+		actual = helpReadDataFileLine(3);
+		expected = "START BASE = http://www.dcs.bbk.ac.uk/about/";
+		assertEquals(expected, actual);
+	}
 	
 	
 	//getting base ref from a starting URL

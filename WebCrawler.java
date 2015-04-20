@@ -49,11 +49,9 @@ public class WebCrawler {
 		} catch (MalformedURLException e) {
 			e.printStackTrace();
 		}
-		//remove any  duplicate "/"s
 		result = normalizeURL(result);
 		return result;
 	}	
-
 	
 	private URL standardizeURL(URL startingURL) {
 		String protocol = startingURL.getProtocol(); 	// e.g. "http"
@@ -66,7 +64,6 @@ public class WebCrawler {
 		} catch (MalformedURLException e) {
 			e.printStackTrace();
 		}
-		//remove any  duplicate "/"s
 		result = normalizeURL(result);		
 		return result;
 	}
@@ -83,8 +80,8 @@ public class WebCrawler {
 		return path;
 	}
 	
-	
-	
+
+	//remove any  duplicate "/"s
 	private URL normalizeURL(URL dirtyURL) {
 		URL result = null;
 		try {
