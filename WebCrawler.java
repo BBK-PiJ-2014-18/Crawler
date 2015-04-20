@@ -27,7 +27,7 @@ public class WebCrawler {
 			while((scrapedString = findURL(inputStream)) != null) {
 				count ++;
 				result = makeFullUrl(scrapedString, base);
-//				System.out.println(count + " " + result.toString());
+				System.out.println(count + " " + result.toString());
 			}
 			inputStream.close();
 		} catch (IOException e) {
@@ -39,13 +39,13 @@ public class WebCrawler {
 	private URL makeBase(URL startingURL) {
 		String protocol = startingURL.getProtocol(); 	// e.g. "http"
 		String host = startingURL.getHost(); 			// e.g. "www.dcs.bbk.ac.uk"
-		String path = startingURL.getPath();			// e.g. "/seminars/index-external.php"
-		path = closePathWithForwardSlash(path);
+		String file = startingURL.getFile();			// e.g. "/seminars/index-external.php"
+		file = closeFileWithForwardSlash(file);
 		//delete any file name from end of path
-		path = path.substring(0, path.lastIndexOf('/') + 1);
+		file = file.substring(0, file.lastIndexOf('/') + 1);
 		URL result = null;
 		try {
-			result = new URL(protocol, host, path);
+			result = new URL(protocol, host, file);
 		} catch (MalformedURLException e) {
 			e.printStackTrace();
 		}
@@ -56,11 +56,11 @@ public class WebCrawler {
 	private URL standardizeURL(URL startingURL) {
 		String protocol = startingURL.getProtocol(); 	// e.g. "http"
 		String host = startingURL.getHost(); 			// e.g. "www.dcs.bbk.ac.uk"
-		String path = startingURL.getPath();			// e.g. "/seminars/index-external.php"
-		path = closePathWithForwardSlash(path);
+		String file = startingURL.getFile();			// e.g. "/seminars/index-external.php"
+		file = closeFileWithForwardSlash(file);
 		URL result = null;
 		try {
-			result = new URL(protocol, host, path);
+			result = new URL(protocol, host, file);
 		} catch (MalformedURLException e) {
 			e.printStackTrace();
 		}
@@ -68,16 +68,17 @@ public class WebCrawler {
 		return result;
 	}
 	
-	private String closePathWithForwardSlash(String path) {
-		//if there is no path (e.g address is just host) then make path = "/"
-		if(path == "") {
-			path = "/";
+	private String closeFileWithForwardSlash(String file) {
+		//if there is no file (e.g address is just host) then make file = "/"
+		if(file == "") {
+			file = "/";
 		}
-		//if there is no file name add "/" (e.g. just "/seminars" becomes "/seminars/"
-		if(!path.substring(path.lastIndexOf('/'), path.length()).contains(".")) {
-			path = path + '/';
+		//if there is no ultimate "file name" or query part add "/" (e.g. just "/seminars" becomes "/seminars/"
+		if(!file.substring(file.lastIndexOf('/'), file.length()).contains(".")
+				&& !file.substring(file.lastIndexOf('/'), file.length()).contains("?")) {
+			file = file + '/';
 		}
-		return path;
+		return file;
 	}
 	
 	//remove any  duplicate "/"s

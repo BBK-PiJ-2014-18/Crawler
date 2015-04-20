@@ -298,18 +298,22 @@ public class WebCrawlerTest {
 		assertEquals(expected, actual);
 	}
 	
+
 	@Test
-	public void testDealWithQueryPartOfURLexampleTwo() {
+	public void testDealWithQueryPartOfURLexampleThree() {
 		WebCrawler wc = new WebCrawler();
-		wc.crawl(helpMakeURL("http://computingcareers.acm.org/?page_id=4"));
+		wc.crawl(helpMakeURL("http://jobs.bbk.ac.uk/fe/tpl_birkbeckcollege01.asp?s=4A515F4E5A565B1A&jobid=55240,0202886098&key=85175678&c=606965128771&pagestamp=sedzccxubhnvbfauxj"));
 		String actual = helpReadDataFileLine(2);
-		String expected = "STARTING URL = http://computingcareers.acm.org/?page_id=4";
+		String expected = "STARTING URL = http://jobs.bbk.ac.uk/fe/tpl_birkbeckcollege01.asp?s=4A515F4E5A565B1A&jobid=55240,0202886098&key=85175678&c=606965128771&pagestamp=sedzccxubhnvbfauxj";
 		assertEquals(expected, actual);
 		actual = helpReadDataFileLine(3);
-		expected = "START BASE = http://computingcareers.acm.org/";
+		expected = "START BASE = http://jobs.bbk.ac.uk/fe/";
 		assertEquals(expected, actual);
 	}
 	
+	
+	
+//	http://jobs.bbk.ac.uk/fe/tpl_birkbeckcollege01.asp?s=4A515F4E5A565B1A&jobid=55240,0202886098&key=85175678&c=606965128771&pagestamp=sedzccxubhnvbfauxj
 	
 }
 
