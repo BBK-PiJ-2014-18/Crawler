@@ -246,5 +246,21 @@ public class WebCrawlerTest {
 		assertEquals(expected, actual);
 	}
 	
+	@Test
+	public void testLongerURLBothStartingAndGettingBase() {
+		WebCrawler wc = new WebCrawler();
+		wc.crawl(helpMakeURL("http://www.dcs.bbk.ac.uk/courses/msccs/entry.php"));
+		String actual = helpReadDataFileLine(2);
+		String expected = "STARTING URL = http://www.dcs.bbk.ac.uk/courses/msccs/";
+		assertEquals(expected, actual);
+		actual = helpReadDataFileLine(3);
+		expected = "START BASE = http://www.dcs.bbk.ac.uk/courses/msccs/";
+		assertEquals(expected, actual);
+	}
 
+	
+	
 }
+
+
+

@@ -80,7 +80,6 @@ public class WebCrawler {
 		return path;
 	}
 	
-
 	//remove any  duplicate "/"s
 	private URL normalizeURL(URL dirtyURL) {
 		URL result = null;
