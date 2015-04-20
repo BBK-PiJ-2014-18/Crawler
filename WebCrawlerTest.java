@@ -258,7 +258,7 @@ public class WebCrawlerTest {
 		assertEquals(expected, actual);
 	}
 
-	// tests dealing with a reference element in a URL (i.e. to remove a #nav or #content)
+	// tests removing a reference element in a URL (i.e. to remove a #nav or #content)
 	
 	@Test
 	public void testRemoveReferenceFromURLnoPathOnlyHost() {
@@ -284,9 +284,32 @@ public class WebCrawlerTest {
 		assertEquals(expected, actual);
 	}
 
-	//and then what about these ?s !?!
+	//tests keeping the "query part" of the URL	
 	
-//	https://www.dcs.bbk.ac.uk/courses/bbkquality.php?from=pgcourses
+	@Test
+	public void testDealWithQueryPartOfURLexampleOne() {
+		WebCrawler wc = new WebCrawler();
+		wc.crawl(helpMakeURL("https://www.dcs.bbk.ac.uk/courses/bbkquality.php?from=pgcourses"));
+		String actual = helpReadDataFileLine(2);
+		String expected = "STARTING URL = https://www.dcs.bbk.ac.uk/courses/bbkquality.php?from=pgcourses";
+		assertEquals(expected, actual);
+		actual = helpReadDataFileLine(3);
+		expected = "START BASE = https://www.dcs.bbk.ac.uk/courses/";
+		assertEquals(expected, actual);
+	}
+	
+	@Test
+	public void testDealWithQueryPartOfURLexampleTwo() {
+		WebCrawler wc = new WebCrawler();
+		wc.crawl(helpMakeURL("http://computingcareers.acm.org/?page_id=4"));
+		String actual = helpReadDataFileLine(2);
+		String expected = "STARTING URL = http://computingcareers.acm.org/?page_id=4";
+		assertEquals(expected, actual);
+		actual = helpReadDataFileLine(3);
+		expected = "START BASE = http://computingcareers.acm.org/";
+		assertEquals(expected, actual);
+	}
+	
 	
 }
 
