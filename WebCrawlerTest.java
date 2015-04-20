@@ -251,7 +251,7 @@ public class WebCrawlerTest {
 		WebCrawler wc = new WebCrawler();
 		wc.crawl(helpMakeURL("http://www.dcs.bbk.ac.uk/courses/msccs/entry.php"));
 		String actual = helpReadDataFileLine(2);
-		String expected = "STARTING URL = http://www.dcs.bbk.ac.uk/courses/msccs/";
+		String expected = "STARTING URL = http://www.dcs.bbk.ac.uk/courses/msccs/entry.php";
 		assertEquals(expected, actual);
 		actual = helpReadDataFileLine(3);
 		expected = "START BASE = http://www.dcs.bbk.ac.uk/courses/msccs/";
