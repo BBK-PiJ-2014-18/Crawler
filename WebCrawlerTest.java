@@ -381,7 +381,7 @@ public class WebCrawlerTest {
 		helpPutStringInTestFile("<a href=\"https://www.dcs.bbk.ac.uk/courses\">Find Me</a>");
 		wc.crawl(helpMakeURL("file:./Crawler/TestHtml/test.html"));
 		String actual = helpReadTempFileLine(3);
-		String expected = "\"1\",\"https://www.dcs.bbk.ac.uk/courses\"";
+		String expected = "\"1\",\"https://www.dcs.bbk.ac.uk/courses/\"";
 		assertEquals(expected, actual);
 	}
 	

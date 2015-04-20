@@ -6,8 +6,6 @@ import java.net.URISyntaxException;
 import java.net.URL;
 
 public class WebCrawler {
-
-//	Local copy of dcs html (when offline) is at "file:./Crawler/TestHtml/test.html";
 	
 	public void crawl(URL startingURL)  {
 		if(startingURL == null){
@@ -23,11 +21,17 @@ public class WebCrawler {
 			inputStream = startingURL.openStream();
 			String scrapedString;
 			URL result;
-			int count = 0;
 			while((scrapedString = findURL(inputStream)) != null) {
-				count ++;
 				result = makeFullUrl(scrapedString, base);
-				System.out.println(count + " " + result.toString());
+				if (result != null) {
+					result = filterURL(result);
+				}
+				if (result != null) {
+					result = standardizeURL(result);
+				}
+				if (result != null) {
+					dm.writeURLtoTemp(1, result);
+				}
 			}
 			inputStream.close();
 		} catch (IOException e) {
@@ -36,6 +40,16 @@ public class WebCrawler {
 		System.out.println("ZZ");
 	}
 
+	// need to set up constructor to have a set of allowed protocols, 
+	// this just placeholder to testing doesn't fail
+	private URL filterURL(URL candidateURL) {
+		String protocol = candidateURL.getProtocol();
+		if(protocol.equals("mailto")) {
+			return null;
+		}
+		return candidateURL;
+	}
+	
 	private URL makeBase(URL startingURL) {
 		String protocol = startingURL.getProtocol(); 	// e.g. "http"
 		String host = startingURL.getHost(); 			// e.g. "www.dcs.bbk.ac.uk"
@@ -62,7 +76,9 @@ public class WebCrawler {
 		try {
 			result = new URL(protocol, host, file);
 		} catch (MalformedURLException e) {
-			e.printStackTrace();
+			return null;
+			// DO THIS REALLY SOON ===> WRITE TO ERROR LOG FILE
+			// WILL SURFACE TICKY URLs
 		}
 		result = normalizeURL(result);		
 		return result;
@@ -90,9 +106,9 @@ public class WebCrawler {
 			result = temp.toURL();
 			//what order should these catches be in??
 		} catch (URISyntaxException ex) {
-			ex.printStackTrace();			
+			// REALLY DO THIS SOON ===> WRITE TO ERROR LOG FILE		
 		} catch (MalformedURLException ex) {
-			ex.printStackTrace();
+			// REALLY DO THIS SOON ===> WRITE TO ERROR LOG FILE
 		}
 		return result;
 	}
