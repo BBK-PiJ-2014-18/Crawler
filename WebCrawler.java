@@ -17,10 +17,10 @@ public class WebCrawler {
 		dm.saveCrawlAttributes(startingURL, base);
 		// need to do the exceptions are done right - check PiJ notes examples
 		InputStream inputStream;
+		URL result = null;
 		try {
 			inputStream = startingURL.openStream();
 			String scrapedString;
-			URL result;
 			while((scrapedString = findURL(inputStream)) != null) {
 				result = makeFullUrl(scrapedString, base);
 				if (result != null) {
@@ -61,6 +61,8 @@ public class WebCrawler {
 		try {
 			result = new URL(protocol, host, file);
 		} catch (MalformedURLException e) {
+			DatabaseManager dm = new DatabaseManager();
+			dm.writeToExceptionLog("MalformedURLException in makeBase(). startingURL:" + startingURL.toString());			
 			e.printStackTrace();
 		}
 		result = normalizeURL(result);
@@ -76,9 +78,9 @@ public class WebCrawler {
 		try {
 			result = new URL(protocol, host, file);
 		} catch (MalformedURLException e) {
+			DatabaseManager dm = new DatabaseManager();
+			dm.writeToExceptionLog("MalformedURLException in standardizeURL(). startingURL:" + startingURL.toString());
 			return null;
-			// DO THIS REALLY SOON ===> WRITE TO ERROR LOG FILE
-			// WILL SURFACE TICKY URLs
 		}
 		result = normalizeURL(result);		
 		return result;
@@ -106,9 +108,11 @@ public class WebCrawler {
 			result = temp.toURL();
 			//what order should these catches be in??
 		} catch (URISyntaxException ex) {
-			// REALLY DO THIS SOON ===> WRITE TO ERROR LOG FILE		
+			DatabaseManager dm = new DatabaseManager();
+			dm.writeToExceptionLog("URISyntaxException in normalizeURL(). Dirty URL:" + dirtyURL);		
 		} catch (MalformedURLException ex) {
-			// REALLY DO THIS SOON ===> WRITE TO ERROR LOG FILE
+			DatabaseManager dm = new DatabaseManager();
+			dm.writeToExceptionLog("MalformedURLException in normalizeURL(). Dirty URL:" + dirtyURL);
 		}
 		return result;
 	}
@@ -121,8 +125,8 @@ public class WebCrawler {
 		try {
 			result = new URL(base, scrapedString);
 		} catch (MalformedURLException e) {
-			System.out.println("MalformedURL! Base:" + base.toString() + " + String: " + scrapedString);
-			e.printStackTrace();
+			DatabaseManager dm = new DatabaseManager();
+			dm.writeToExceptionLog("MalformedURL in makeFullUrl(). Base:" + base.toString() + " + String: " + scrapedString);
 		}
 		return result;
 	}
