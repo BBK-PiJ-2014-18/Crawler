@@ -13,6 +13,7 @@ public class WebCrawler {
 		if(startingURL == null){
 			throw new NullPointerException("URL may not be null");
 		}
+		startingURL = standardizeURL(startingURL);
 		URL base = makeBase(startingURL);
 		DatabaseManager dm = new DatabaseManager();
 		dm.saveCrawlAttributes(startingURL, base);
@@ -30,8 +31,7 @@ public class WebCrawler {
 			}
 			inputStream.close();
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			System.out.println("File Not Found: " + startingURL);
 		}
 		System.out.println("ZZ");
 	}
@@ -40,15 +40,7 @@ public class WebCrawler {
 		String protocol = startingURL.getProtocol(); 	// e.g. "http"
 		String host = startingURL.getHost(); 			// e.g. "www.dcs.bbk.ac.uk"
 		String path = startingURL.getPath();			// e.g. "/seminars/index-external.php"
-		
-		//if there is no path (e.g address is just host) then make path = "/"
-		if(path == "") {
-			path = "/";
-		}
-		//if there is no file name (e.g. just "/seminars" has "/" added to complete as "/seminars/"
-		if(!path.substring(path.lastIndexOf('/'), path.length()).contains(".")) {
-			path = path + '/';
-		}
+		path = closePathWithForwardSlash(path);
 		//delete any file name from end of path
 		path = path.substring(0, path.lastIndexOf('/') + 1);
 		URL result = null;
@@ -57,11 +49,41 @@ public class WebCrawler {
 		} catch (MalformedURLException e) {
 			e.printStackTrace();
 		}
-		//remove any  duplicate "/"s added above
+		//remove any  duplicate "/"s
 		result = normalizeURL(result);
 		return result;
 	}	
 
+	
+	private URL standardizeURL(URL startingURL) {
+		String protocol = startingURL.getProtocol(); 	// e.g. "http"
+		String host = startingURL.getHost(); 			// e.g. "www.dcs.bbk.ac.uk"
+		String path = startingURL.getPath();			// e.g. "/seminars/index-external.php"
+		path = closePathWithForwardSlash(path);
+		URL result = null;
+		try {
+			result = new URL(protocol, host, path);
+		} catch (MalformedURLException e) {
+			e.printStackTrace();
+		}
+		//remove any  duplicate "/"s
+		result = normalizeURL(result);		
+		return result;
+	}
+	
+	private String closePathWithForwardSlash(String path) {
+		//if there is no path (e.g address is just host) then make path = "/"
+		if(path == "") {
+			path = "/";
+		}
+		//if there is no file name add "/" (e.g. just "/seminars" becomes "/seminars/"
+		if(!path.substring(path.lastIndexOf('/'), path.length()).contains(".")) {
+			path = path + '/';
+		}
+		return path;
+	}
+	
+	
 	
 	private URL normalizeURL(URL dirtyURL) {
 		URL result = null;
