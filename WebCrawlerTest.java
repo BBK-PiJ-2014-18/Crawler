@@ -21,21 +21,18 @@ public class WebCrawlerTest {
 	private static final String TEMP_FILE = "./Crawler/Data/crawltemp.txt";
 	private static final String ATTRIBUTES_FILE = "./Crawler/Data/crawlattributes.txt";
 	
+	@BeforeClass
+	public static void doOnceAtStartOfTests() {
+		File f = new File("./Crawler/TestHtml");
+		f.mkdir();
+	}
+	
+	
 	// RULE
 	
 	@Rule
 	public ExpectedException thrown = ExpectedException.none();
-	
-	
-	@BeforeClass
-	public static void doOnceAtStartOfTests() {
-		DatabaseManager dm = new DatabaseManager();
-		dm.makeDirectory("./Crawler/Data");
-		dm.makeDirectory("./Crawler/TestHtml");
-	}
-	
-	
-	
+		
 	// HELPER METHODS
 	
 	private URL helpMakeURL(String str) {
@@ -96,9 +93,6 @@ public class WebCrawlerTest {
 		}
 		return result;
 	}
-	
-	
-	
 	
 	private void helpPutStringInTestFile(String str) {
 		PrintWriter out = null;
@@ -381,7 +375,7 @@ public class WebCrawlerTest {
 		helpPutStringInTestFile("<a href=\"https://www.dcs.bbk.ac.uk/courses\">Find Me</a>");
 		wc.crawl(helpMakeURL("file:./Crawler/TestHtml/test.html"));
 		String actual = helpReadTempFileLine(3);
-		String expected = "\"1\",\"https://www.dcs.bbk.ac.uk/courses/\"";
+		String expected = "1,\"https://www.dcs.bbk.ac.uk/courses/\"";
 		assertEquals(expected, actual);
 	}
 	

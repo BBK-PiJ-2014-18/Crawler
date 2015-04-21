@@ -1,19 +1,23 @@
 import java.io.IOException;
 import java.io.InputStream;
-import java.net.MalformedURLException;
-import java.net.URI;
-import java.net.URISyntaxException;
 import java.net.URL;
 
 public class WebCrawler {
 	
+	private DatabaseManager dm;
+	private URLmanipulator um;
+	
+	public WebCrawler() {
+		this.dm = new DatabaseManager();
+		this.um = new URLmanipulator();
+	}
+
 	public void crawl(URL startingURL)  {
 		if(startingURL == null){
 			throw new NullPointerException("URL may not be null");
 		}
-		startingURL = standardizeURL(startingURL);
-		URL base = makeBase(startingURL);
-		DatabaseManager dm = new DatabaseManager();
+		startingURL = um.standardizeURL(startingURL);
+		URL base = um.makeBase(startingURL);
 		dm.saveCrawlAttributes(startingURL, base);
 		// need to do the exceptions are done right - check PiJ notes examples
 		InputStream inputStream;
@@ -22,12 +26,12 @@ public class WebCrawler {
 			inputStream = startingURL.openStream();
 			String scrapedString;
 			while((scrapedString = findURL(inputStream)) != null) {
-				result = makeFullUrl(scrapedString, base);
+				result = um.makeFullUrl(scrapedString, base);
 				if (result != null) {
 					result = filterURL(result);
 				}
 				if (result != null) {
-					result = standardizeURL(result);
+					result = um.standardizeURL(result);
 				}
 				if (result != null) {
 					dm.writeURLtoTemp(1, result);
@@ -41,7 +45,7 @@ public class WebCrawler {
 	}
 
 	// need to set up constructor to have a set of allowed protocols, 
-	// this just placeholder to testing doesn't fail
+	// this just placeholder so testing doesn't fail
 	private URL filterURL(URL candidateURL) {
 		String protocol = candidateURL.getProtocol();
 		if(protocol.equals("mailto")) {
@@ -50,86 +54,7 @@ public class WebCrawler {
 		return candidateURL;
 	}
 	
-	private URL makeBase(URL startingURL) {
-		String protocol = startingURL.getProtocol(); 	// e.g. "http"
-		String host = startingURL.getHost(); 			// e.g. "www.dcs.bbk.ac.uk"
-		String file = startingURL.getFile();			// e.g. "/seminars/index-external.php"
-		file = closeFileWithForwardSlash(file);
-		//delete any file name from end of path
-		file = file.substring(0, file.lastIndexOf('/') + 1);
-		URL result = null;
-		try {
-			result = new URL(protocol, host, file);
-		} catch (MalformedURLException e) {
-			DatabaseManager dm = new DatabaseManager();
-			dm.writeToExceptionLog("MalformedURLException in makeBase(). startingURL:" + startingURL.toString());			
-			e.printStackTrace();
-		}
-		result = normalizeURL(result);
-		return result;
-	}	
-	
-	private URL standardizeURL(URL startingURL) {
-		String protocol = startingURL.getProtocol(); 	// e.g. "http"
-		String host = startingURL.getHost(); 			// e.g. "www.dcs.bbk.ac.uk"
-		String file = startingURL.getFile();			// e.g. "/seminars/index-external.php"
-		file = closeFileWithForwardSlash(file);
-		URL result = null;
-		try {
-			result = new URL(protocol, host, file);
-		} catch (MalformedURLException e) {
-			DatabaseManager dm = new DatabaseManager();
-			dm.writeToExceptionLog("MalformedURLException in standardizeURL(). startingURL:" + startingURL.toString());
-			return null;
-		}
-		result = normalizeURL(result);		
-		return result;
-	}
-	
-	private String closeFileWithForwardSlash(String file) {
-		//if there is no file (e.g address is just host) then make file = "/"
-		if(file == "") {
-			file = "/";
-		}
-		//if there is no ultimate "file name" or query part add "/" (e.g. just "/seminars" becomes "/seminars/"
-		if(!file.substring(file.lastIndexOf('/'), file.length()).contains(".")
-				&& !file.substring(file.lastIndexOf('/'), file.length()).contains("?")) {
-			file = file + '/';
-		}
-		return file;
-	}
-	
-	//remove any  duplicate "/"s
-	private URL normalizeURL(URL dirtyURL) {
-		URL result = null;
-		try {
-			URI temp = dirtyURL.toURI();
-			temp = temp.normalize();
-			result = temp.toURL();
-			//what order should these catches be in??
-		} catch (URISyntaxException ex) {
-			DatabaseManager dm = new DatabaseManager();
-			dm.writeToExceptionLog("URISyntaxException in normalizeURL(). Dirty URL:" + dirtyURL);		
-		} catch (MalformedURLException ex) {
-			DatabaseManager dm = new DatabaseManager();
-			dm.writeToExceptionLog("MalformedURLException in normalizeURL(). Dirty URL:" + dirtyURL);
-		}
-		return result;
-	}
-	
-	private URL makeFullUrl(String scrapedString, URL base) {
-		URL result = null;
-		if(scrapedString.charAt(0) == '/') {
-			scrapedString = scrapedString.substring(1, scrapedString.length());
-		}
-		try {
-			result = new URL(base, scrapedString);
-		} catch (MalformedURLException e) {
-			DatabaseManager dm = new DatabaseManager();
-			dm.writeToExceptionLog("MalformedURL in makeFullUrl(). Base:" + base.toString() + " + String: " + scrapedString);
-		}
-		return result;
-	}
+
 	
 	private String findURL(InputStream inputStream) {
 		HTMLread reader = new HTMLread();
