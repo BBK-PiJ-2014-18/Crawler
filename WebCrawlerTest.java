@@ -27,7 +27,6 @@ public class WebCrawlerTest {
 		f.mkdir();
 	}
 	
-	
 	// RULE
 	
 	@Rule
@@ -61,7 +60,7 @@ public class WebCrawlerTest {
 				}
 			}
 		} catch (FileNotFoundException ex) {
-			System.out.println("File " + file + "does not exist");
+			System.out.println("File " + file + " does not exist");
 		} catch (IOException ex) {
 			ex.printStackTrace();
 		} finally {
@@ -85,7 +84,7 @@ public class WebCrawlerTest {
 				}
 			}
 		} catch (FileNotFoundException ex) {
-			System.out.println("File " + file + "does not exist");
+			System.out.println("File " + file + " does not exist");
 		} catch (IOException ex) {
 			ex.printStackTrace();
 		} finally {
@@ -94,7 +93,7 @@ public class WebCrawlerTest {
 		return result;
 	}
 	
-	private void helpPutStringInTestFile(String str) {
+	private void helpMakeHTMLTestFile(String base, String link) {
 		PrintWriter out = null;
 		File file = new File("./Crawler/TestHtml/test.html");
 		try {
@@ -102,11 +101,12 @@ public class WebCrawlerTest {
 			out.println("<!DOCTYPE html>");
 			out.println("<html>");
 			out.println("<head>");
+			out.println(base);
 			out.println("<title>Find Links</title>");
 			out.println("</head>");
 			out.println("<body>");
 			out.println("<p>LINKS TO FIND ARE IN THE TEXT BELOW</p>");
-			out.println(str);
+			out.println(link);
 			out.println("<p>EOF</p>");
 			out.println("</body>");
 			out.println("</html>");;
@@ -372,18 +372,30 @@ public class WebCrawlerTest {
 	@Test
 	public void testScrapeFirstURLfromFile() {
 		WebCrawler wc = new WebCrawler();
-		helpPutStringInTestFile("<a href=\"https://www.dcs.bbk.ac.uk/courses\">Find Me</a>");
+		helpMakeHTMLTestFile("", "<a href=\"https://www.dcs.bbk.ac.uk/courses\">Find Me</a>");
 		wc.crawl(helpMakeURL("file:./Crawler/TestHtml/test.html"));
 		String actual = helpReadTempFileLine(3);
 		String expected = "1,\"https://www.dcs.bbk.ac.uk/courses/\"";
 		assertEquals(expected, actual);
 	}
 	
+	@Test
+	public void testScrapeFirstBasePlusURLfromFile() {
+		WebCrawler wc = new WebCrawler();
+		helpMakeHTMLTestFile("<base href=\"https://www.dcs.bbk.ac.uk\">", "<a href=\"courses\">Find Me</a>");
+		wc.crawl(helpMakeURL("file:./Crawler/TestHtml/test.html"));
+		String actual = helpReadTempFileLine(3);
+		String expected = "1,\"https://www.dcs.bbk.ac.uk/courses/\"";
+		assertEquals(expected, actual);
+	}
+	
+	
 //	THESE WILL BE A PROBLEMS?
 //	http://www.bbk.ac.uk/news/web-pioneer-gives-2015-andrew-booth-memorial-lecture-at-birkbeck-1
 //	http://staff.bbk.ac.uk	
 	
-
+//what, if anything, to do about HTML Global Attributes? Need to pick href as next after <a as can't 
+//check presence of a space after <a
 
 	
 

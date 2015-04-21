@@ -21,6 +21,20 @@ public class WebCrawler {
 		dm.saveCrawlAttributes(startingURL, base);
 		// need to do the exceptions are done right - check PiJ notes examples
 		InputStream inputStream;
+		try {
+			inputStream = startingURL.openStream();
+			String scrapedString;
+			while((scrapedString = findBaseURL(inputStream)) != null) {
+				System.out.println(scrapedString);
+				base = new URL(scrapedString);
+				if (base != null) {
+					base = um.standardizeURL(base);
+				}
+			}
+			inputStream.close();
+		} catch (IOException e) {
+			System.out.println("File Not Found: " + startingURL);
+		}
 		URL result = null;
 		try {
 			inputStream = startingURL.openStream();
@@ -54,7 +68,64 @@ public class WebCrawler {
 		return candidateURL;
 	}
 	
-
+	
+	private String findBaseURL(InputStream inputStream) {
+		HTMLread reader = new HTMLread();
+		boolean done = false;
+		while (!done) {		
+			//readUntil takes us to a [<] or if we hit end of file returns false
+			done = reader.readUntil(inputStream, '<', (char) -1);
+			//if we've reached the end of file return null
+			if(!done) {
+				return null;
+			}
+			//skipSpace takes us through [a href="] ... need to deal with hit EOF	
+			if (reader.skipSpace(inputStream, 'b') != Character.MIN_CODE_POINT) {
+				done = false;
+			}
+			if (done & reader.skipSpace(inputStream, 'a') != Character.MIN_CODE_POINT) {
+				done = false;
+			}
+			if (done & reader.skipSpace(inputStream, 's') != Character.MIN_CODE_POINT) {
+				done = false;
+			}
+			if (done & reader.skipSpace(inputStream, 'e') != Character.MIN_CODE_POINT) {
+				done = false;
+			}
+			if (done && reader.skipSpace(inputStream, 'h') != Character.MIN_CODE_POINT) {
+				done = false;
+			}
+			if (done && reader.skipSpace(inputStream, 'r') != Character.MIN_CODE_POINT) {
+				done = false;
+			}
+			if (done && reader.skipSpace(inputStream, 'e') != Character.MIN_CODE_POINT) {
+				done = false;
+			}
+			if (done && reader.skipSpace(inputStream, 'f') != Character.MIN_CODE_POINT) {
+				done = false;
+			}		
+			if (done && reader.skipSpace(inputStream, '=') != Character.MIN_CODE_POINT) {
+				done = false;
+			}
+			//one way to deal with EOF (skipSpace returns the first non white space char it hits..)
+			//do this for each element of [a href="] ????
+			//need to set up some testing as real world examples proper rare I guess...
+			char aChar = reader.skipSpace(inputStream, '"');
+			if (done && aChar != Character.MIN_CODE_POINT) {
+				done = false;
+			}
+			if(aChar == (char) -1) {
+				System.out.println("EOF IN MIDDLE OF URL");
+				return null;
+			}
+		}
+		// read the URL to string, we get null from readString if hit EOF during read
+		String str = reader.readString(inputStream, '"', (char) -1); 	// '\u001a' > using (char) -1, fix it! 
+		return str;
+	}
+	
+	
+	
 	
 	private String findURL(InputStream inputStream) {
 		HTMLread reader = new HTMLread();
@@ -70,6 +141,7 @@ public class WebCrawler {
 			if (reader.skipSpace(inputStream, 'a') != Character.MIN_CODE_POINT) {
 				done = false;
 			}
+			
 			if (done && reader.skipSpace(inputStream, 'h') != Character.MIN_CODE_POINT) {
 				done = false;
 			}
