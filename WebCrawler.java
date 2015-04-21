@@ -19,13 +19,16 @@ public class WebCrawler {
 		startingURL = um.standardizeURL(startingURL);
 		URL base = um.makeBase(startingURL);
 		dm.saveCrawlAttributes(startingURL, base);
-		// need to do the exceptions are done right - check PiJ notes examples
+		scrapePage(startingURL, base);
+	}
+
+	private void scrapePage(URL startingURL, URL base) {
 		InputStream inputStream;
+		// need to do the exceptions are done right - check PiJ notes examples
 		try {
 			inputStream = startingURL.openStream();
 			String scrapedString;
 			while((scrapedString = findBaseURL(inputStream)) != null) {
-				System.out.println(scrapedString);
 				base = new URL(scrapedString);
 				if (base != null) {
 					base = um.standardizeURL(base);
@@ -36,6 +39,7 @@ public class WebCrawler {
 			System.out.println("File Not Found: " + startingURL);
 		}
 		URL result = null;
+		// need to do the exceptions are done right - check PiJ notes examples
 		try {
 			inputStream = startingURL.openStream();
 			String scrapedString;
@@ -57,18 +61,8 @@ public class WebCrawler {
 		}
 		System.out.println("ZZ");
 	}
+	
 
-	// need to set up constructor to have a set of allowed protocols, 
-	// this just placeholder so testing doesn't fail
-	private URL filterURL(URL candidateURL) {
-		String protocol = candidateURL.getProtocol();
-		if(protocol.equals("mailto")) {
-			return null;
-		}
-		return candidateURL;
-	}
-	
-	
 	private String findBaseURL(InputStream inputStream) {
 		HTMLread reader = new HTMLread();
 		boolean done = false;
@@ -83,13 +77,13 @@ public class WebCrawler {
 			if (reader.skipSpace(inputStream, 'b') != Character.MIN_CODE_POINT) {
 				done = false;
 			}
-			if (done & reader.skipSpace(inputStream, 'a') != Character.MIN_CODE_POINT) {
+			if (done && reader.skipSpace(inputStream, 'a') != Character.MIN_CODE_POINT) {
 				done = false;
 			}
-			if (done & reader.skipSpace(inputStream, 's') != Character.MIN_CODE_POINT) {
+			if (done && reader.skipSpace(inputStream, 's') != Character.MIN_CODE_POINT) {
 				done = false;
 			}
-			if (done & reader.skipSpace(inputStream, 'e') != Character.MIN_CODE_POINT) {
+			if (done && reader.skipSpace(inputStream, 'e') != Character.MIN_CODE_POINT) {
 				done = false;
 			}
 			if (done && reader.skipSpace(inputStream, 'h') != Character.MIN_CODE_POINT) {
@@ -124,9 +118,6 @@ public class WebCrawler {
 		return str;
 	}
 	
-	
-	
-	
 	private String findURL(InputStream inputStream) {
 		HTMLread reader = new HTMLread();
 		boolean done = false;
@@ -141,7 +132,6 @@ public class WebCrawler {
 			if (reader.skipSpace(inputStream, 'a') != Character.MIN_CODE_POINT) {
 				done = false;
 			}
-			
 			if (done && reader.skipSpace(inputStream, 'h') != Character.MIN_CODE_POINT) {
 				done = false;
 			}
@@ -173,4 +163,14 @@ public class WebCrawler {
 		String str = reader.readString(inputStream, '"', (char) -1); 	// '\u001a' > using (char) -1, fix it! 
 		return str;
 	}	
+	
+	// need to set up constructor to have a set of allowed protocols, 
+	// this just placeholder so testing doesn't fail
+	private URL filterURL(URL candidateURL) {
+		String protocol = candidateURL.getProtocol();
+		if(protocol.equals("mailto")) {
+			return null;
+		}
+		return candidateURL;
+	}
 }
