@@ -56,15 +56,14 @@ public class DatabaseManager {
 		}
 	}
 	
-	public void writeURLtoTemp(int priority, URL urlToWrite) {
+	
+	public void intitalizeTempFile(URL startingURL) {
 		PrintWriter out = null;
 		File file = new File(TEMP_FILE);
 		try {
 			out = new PrintWriter(new BufferedWriter(new FileWriter(file,true)));
 			out.println("CRAWL TEMP DATABASE");
-			out.println("FIX WRITE OF STARTING URL HERE");
-			out.println(priority + ",\"" + urlToWrite.toString()+ "\"");
-			out.println("EOF");
+			out.println("0,\"" + startingURL.toString()+ "\"");
 		} catch (FileNotFoundException ex) {
 			System.out.println("Cannot write to file " + file + ".");
 		} catch (IOException e) {
@@ -73,6 +72,31 @@ public class DatabaseManager {
 		} finally {
 			out.close();
 		}
+	}
+	
+	
+	public void writeURLtoTemp(int priority, URL urlToWrite) {
+		PrintWriter out = null;
+		File file = new File(TEMP_FILE);
+		try {
+			out = new PrintWriter(new BufferedWriter(new FileWriter(file,true)));
+			out.println(priority + ",\"" + urlToWrite.toString()+ "\"");
+		} catch (FileNotFoundException ex) {
+			System.out.println("Cannot write to file " + file + ".");
+		} catch (IOException e) {
+			System.out.println("Cannot write to file (IO exception) " + file + ".");
+			e.printStackTrace();
+		} finally {
+			out.close();
+		}
+	}
+	
+	public URL getNextURL(int maxDepth) {
+		
+		//return the lowest priority URL or null if none <= maxDepth
+		//make the priority of the returned URL = 0;
+		
+		return null;
 	}
 	
 

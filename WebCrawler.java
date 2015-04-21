@@ -6,20 +6,47 @@ public class WebCrawler {
 	
 	private DatabaseManager dm;
 	private URLmanipulator um;
+	private int countLinks;
+	private int countDepth;
+	private int maxLinks;
+	private int maxDepth;
 	
 	public WebCrawler() {
 		this.dm = new DatabaseManager();
 		this.um = new URLmanipulator();
+		this.countLinks = 0;
+		this.countDepth = 0;
+		this.maxLinks = 1000;
+		this.maxDepth = 3;
 	}
 
+	//crawl should have database information as an argument
 	public void crawl(URL startingURL)  {
 		if(startingURL == null){
 			throw new NullPointerException("URL may not be null");
 		}
 		startingURL = um.standardizeURL(startingURL);
 		URL base = um.makeBase(startingURL);
-		dm.saveCrawlAttributes(startingURL, base);
-		scrapePage(startingURL, base);
+		//only do this first time
+		if (countDepth == 0) {
+			dm.saveCrawlAttributes(startingURL, base);
+			dm.intitalizeTempFile(startingURL);
+		}
+		countDepth++;
+		if(countDepth <= maxDepth && countLinks <= maxLinks) {
+			scrapePage(startingURL, base);
+		} else {
+			return;
+		}
+
+		//INSERT: searchPage here
+
+		URL nextURL = dm.getNextURL(maxDepth);
+		if(nextURL != null) {
+			crawl(nextURL);
+		} else {
+			return;
+		}
 	}
 
 	private void scrapePage(URL startingURL, URL base) {
@@ -52,7 +79,11 @@ public class WebCrawler {
 					result = um.standardizeURL(result);
 				}
 				if (result != null) {
-					dm.writeURLtoTemp(1, result);
+					if(countLinks <= maxLinks) {
+						dm.writeURLtoTemp(countDepth, result);
+					} else {
+						return;
+					}
 				}
 			}
 			inputStream.close();
