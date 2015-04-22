@@ -413,11 +413,22 @@ public class WebCrawlerTest {
 		String expected = "0,\"http://libeproject.it/?lang=en%2F%3Flang%3Den&\"";
 		assertEquals(expected, actual);
 	}
+	
+	@Test
+	public void testDealWithURLWithSpacesFromFile() {
+		WebCrawler wc = new WebCrawler();
+		helpMakeHTMLTestFile("", "<a href=\"http://www.dcs.bbk.ac.uk/courses/bsccomp/bsc-comp-part-time-booklet 2013-14.pdf\">Find Me</a>");
+		wc.crawl(helpMakeURL("file:./Crawler/TestHtml/test.html"));
+		String actual = helpReadTempFileLine(3);
+		String expected = "0,\"http://www.dcs.bbk.ac.uk/courses/bsccomp/bsc-comp-part-time-booklet%202013-14.pdf\"";
+		assertEquals(expected, actual);
+	}
 
 	
 //	THESE WILL BE A PROBLEMS?
 //	http://www.bbk.ac.uk/news/web-pioneer-gives-2015-andrew-booth-memorial-lecture-at-birkbeck-1
 //	http://staff.bbk.ac.uk	
+//  http://www.dcs.bbk.ac.uk/courses/bsccomp/bsc-comp-part-time-booklet 2013-14.pdf	
 	
 //what, if anything, to do about HTML Global Attributes? Need to pick href as next after <a as can't 
 //check presence of a space after <a
