@@ -16,8 +16,8 @@ public class WebCrawler {
 		this.um = new URLmanipulator();
 		this.countLinks = 0;
 		this.countDepth = 0;
-		this.maxLinks = 1000;
-		this.maxDepth = 10;
+		this.maxLinks = 10000;
+		this.maxDepth = 1000;
 	}
 
 	//crawl should have database information as an argument

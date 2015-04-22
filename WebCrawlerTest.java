@@ -231,6 +231,8 @@ public class WebCrawlerTest {
 		assertEquals(expected, actual);
 	}
 	
+	// favourite x test
+	
 	@Test
 	public void testCreatingBaseUrlFromStartingUrlNoFinalFowardSlash() {
 		WebCrawler wc = new WebCrawler();
@@ -369,6 +371,9 @@ public class WebCrawlerTest {
 	
 	//SCRAPING URLS
 	
+	
+	// these next two will only pass when just do one depth (or change expected priority from 1 to 0)
+	
 	@Test
 	public void testScrapeFirstURLfromFile() {
 		WebCrawler wc = new WebCrawler();
@@ -389,6 +394,26 @@ public class WebCrawlerTest {
 		assertEquals(expected, actual);
 	}
 	
+	@Test
+	public void testScrapeBasePlusRelativeURLThatIsEmptyStringfromFile() {
+		WebCrawler wc = new WebCrawler();
+		helpMakeHTMLTestFile("<base href=\"https://www.dcs.bbk.ac.uk/courses\">", "<a href=\"\">Find Me</a>");
+		wc.crawl(helpMakeURL("file:./Crawler/TestHtml/test.html"));
+		String actual = helpReadTempFileLine(3);
+		String expected = "0,\"https://www.dcs.bbk.ac.uk/courses/\"";
+		assertEquals(expected, actual);
+	}
+	
+	@Test
+	public void testScrapeURLThatHostPlusStraightToQuestionMarkStuffNoFile() {
+		WebCrawler wc = new WebCrawler();
+		helpMakeHTMLTestFile("", "<a href=\"http://libeproject.it?lang=en%2F%3Flang%3Den&#038;paged=2\">Find Me</a>");
+		wc.crawl(helpMakeURL("file:./Crawler/TestHtml/test.html"));
+		String actual = helpReadTempFileLine(3);
+		String expected = "0,\"http://libeproject.it/?lang=en%2F%3Flang%3Den&\"";
+		assertEquals(expected, actual);
+	}
+
 	
 //	THESE WILL BE A PROBLEMS?
 //	http://www.bbk.ac.uk/news/web-pioneer-gives-2015-andrew-booth-memorial-lecture-at-birkbeck-1

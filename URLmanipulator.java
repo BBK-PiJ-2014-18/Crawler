@@ -17,7 +17,7 @@ public class URLmanipulator {
 		String protocol = startingURL.getProtocol(); 	// e.g. "http"
 		String host = startingURL.getHost(); 			// e.g. "www.dcs.bbk.ac.uk"
 		String file = startingURL.getFile();			// e.g. "/seminars/index-external.php"
-		file = closeFileWithForwardSlash(file);
+		file = fixFrontAndBackForwardSlashOnFile(file);
 		//delete any file name from end of path
 		file = file.substring(0, file.lastIndexOf('/') + 1);
 		URL result = null;
@@ -35,7 +35,7 @@ public class URLmanipulator {
 		String protocol = startingURL.getProtocol(); 	// e.g. "http"
 		String host = startingURL.getHost(); 			// e.g. "www.dcs.bbk.ac.uk"
 		String file = startingURL.getFile();			// e.g. "/seminars/index-external.php"
-		file = closeFileWithForwardSlash(file);
+		file = fixFrontAndBackForwardSlashOnFile(file);
 		URL result = null;
 		try {
 			result = new URL(protocol, host, file);
@@ -47,20 +47,21 @@ public class URLmanipulator {
 		return result;
 	}
 	
-	private String closeFileWithForwardSlash(String file) {
-		//if there is no file (e.g address is just host) then make file = "/"
-		if(file == "") {
-			file = "/";
+	private String fixFrontAndBackForwardSlashOnFile(String file) {
+		//if there is no file (e.g file = "" so address is just host)
+		//or file part is just query (sitting right on top of host)
+		if(!file.contains("/")) {
+			file = "/" + file;
 		}
 		//if there is no ultimate "file name" or query part add "/" (e.g. just "/seminars" becomes "/seminars/"
 		if(!file.substring(file.lastIndexOf('/'), file.length()).contains(".")
 				&& !file.substring(file.lastIndexOf('/'), file.length()).contains("?")) {
 			file = file + '/';
-		}
+		}	
 		return file;
 	}
 	
-	//remove any  duplicate "/"s
+	//remove any  duplicate "/"s that have got in
 	private URL normalizeURL(URL dirtyURL) {
 		URL result = null;
 		try {
@@ -78,7 +79,8 @@ public class URLmanipulator {
 	
 	public URL makeFullUrl(String scrapedString, URL base) {
 		URL result = null;
-		if(scrapedString.charAt(0) == '/') {
+		//scraped string can be "" when relative URL is just meant to take to <base url
+		if(!scrapedString.equals("") && scrapedString.charAt(0) == '/') {
 			scrapedString = scrapedString.substring(1, scrapedString.length());
 		}
 		try {
