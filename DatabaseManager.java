@@ -1,9 +1,12 @@
+import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.io.Reader;
 import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -76,6 +79,9 @@ public class DatabaseManager {
 	
 	
 	public void writeURLtoTemp(int priority, URL urlToWrite) {
+		
+		//TODO: don't allow duplicates to be written
+		
 		PrintWriter out = null;
 		File file = new File(TEMP_FILE);
 		try {
@@ -93,11 +99,56 @@ public class DatabaseManager {
 	
 	public URL getNextURL(int maxDepth) {
 		
-		//return the lowest priority URL or null if none <= maxDepth
+		//return the lowest priority URL or null if none <= maxDepth or all are zero
 		//make the priority of the returned URL = 0;
-		
-		return null;
+		URL result = null;
+		PrintWriter out = null;
+		BufferedReader in = null;
+		File aFile = new File(TEMP_FILE);
+		File bFile = new File(TEMP_FILE + "1");
+		try {
+			out = new PrintWriter(bFile);
+			in = new BufferedReader(new FileReader(aFile));
+			//read the file "intro text" on first line
+			String line = in.readLine();
+			out.println(line);
+			//work through the records
+			boolean foundNextURL = false;
+			while ((line = in.readLine()) != null) {
+				String d = line.substring(0, line.indexOf(','));
+				int depth = Integer.parseInt(d);
+				if(!foundNextURL && depth > 0 && depth <= maxDepth) {
+					result = new URL(line.substring(line.indexOf('"') + 1, line.length() - 1));
+					foundNextURL = true;
+					line = "0,\"" + result.toString() + "\"";
+				}
+				out.println(line);
+			}
+		} catch (FileNotFoundException ex) {
+			System.out.println("File " + aFile + " does not exist");
+		} catch (IOException ex) {
+			ex.printStackTrace();
+		} finally {
+			closeReader(in);
+			out.close();
+		}
+		bFile.renameTo(aFile);
+		return result;
 	}
 	
+	
+	
+	
+	
+	private void closeReader(Reader reader) {
+		try {
+			if (reader != null) {
+				reader.close();
+			}
+		} catch (IOException ex) {
+			ex.printStackTrace();
+		}
+	}		
+
 
 }

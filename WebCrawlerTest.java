@@ -375,7 +375,7 @@ public class WebCrawlerTest {
 		helpMakeHTMLTestFile("", "<a href=\"https://www.dcs.bbk.ac.uk/courses\">Find Me</a>");
 		wc.crawl(helpMakeURL("file:./Crawler/TestHtml/test.html"));
 		String actual = helpReadTempFileLine(3);
-		String expected = "1,\"https://www.dcs.bbk.ac.uk/courses/\"";
+		String expected = "0,\"https://www.dcs.bbk.ac.uk/courses/\"";
 		assertEquals(expected, actual);
 	}
 	
@@ -385,7 +385,7 @@ public class WebCrawlerTest {
 		helpMakeHTMLTestFile("<base href=\"https://www.dcs.bbk.ac.uk\">", "<a href=\"courses\">Find Me</a>");
 		wc.crawl(helpMakeURL("file:./Crawler/TestHtml/test.html"));
 		String actual = helpReadTempFileLine(3);
-		String expected = "1,\"https://www.dcs.bbk.ac.uk/courses/\"";
+		String expected = "0,\"https://www.dcs.bbk.ac.uk/courses/\"";
 		assertEquals(expected, actual);
 	}
 	

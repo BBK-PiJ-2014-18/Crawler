@@ -17,7 +17,7 @@ public class WebCrawler {
 		this.countLinks = 0;
 		this.countDepth = 0;
 		this.maxLinks = 1000;
-		this.maxDepth = 3;
+		this.maxDepth = 10;
 	}
 
 	//crawl should have database information as an argument
@@ -34,6 +34,7 @@ public class WebCrawler {
 		}
 		countDepth++;
 		if(countDepth <= maxDepth && countLinks <= maxLinks) {
+			System.out.println("Links = " + countLinks + " Depth = " + countDepth);
 			scrapePage(startingURL, base);
 		} else {
 			return;
@@ -81,6 +82,7 @@ public class WebCrawler {
 				if (result != null) {
 					if(countLinks <= maxLinks) {
 						dm.writeURLtoTemp(countDepth, result);
+						countLinks++;
 					} else {
 						return;
 					}
@@ -104,6 +106,10 @@ public class WebCrawler {
 			if(!done) {
 				return null;
 			}
+			
+			//can rework this to iterate thru a string "ahref=" doing one char at a time
+			//and reuse method for "basehref=" and for the search method
+			
 			//skipSpace takes us through [a href="] ... need to deal with hit EOF	
 			if (reader.skipSpace(inputStream, 'b') != Character.MIN_CODE_POINT) {
 				done = false;
