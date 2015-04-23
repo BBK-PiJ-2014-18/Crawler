@@ -5,17 +5,19 @@ import java.lang.Character;
 public class HTMLread {
 	
 		/**
-		 * 		  
+		 * 	CASE SENSITIVE	  
 		 * @param inputStream
 		 * @param ch1, the char to read until
 		 * @param ch2, the end of file char ?? [(char) -1]
 		 * @return true if ch1 found, false if EOF reached.
 		 */
 		public boolean readUntil(InputStream inputStream, char ch1, char ch2) {
+			ch1 = Character.toLowerCase(ch1);
+			ch2 = Character.toLowerCase(ch2);
 			char aChar;
 			try {	
 				while((aChar = (char) inputStream.read()) != ch2) {
-					if(aChar == ch1) {
+					if(Character.toLowerCase(aChar) == ch1) {
 						return true;
 					}
 				}	
@@ -26,18 +28,19 @@ public class HTMLread {
 		}
 		
 		/**
-		 * 
+		 * CASE SENSITIVE
 		 * @param inputStream
 		 * @param ch, the char sought...
 		 * @return the first not blank char if that is not ch; if it is ch then Character.MIN_CODE_POINT
 		 */	
 		public char skipSpace(InputStream inputStream, char ch) {
+			ch = Character.toLowerCase(ch);
 			//it's not cool to have to initialize aChar here... but err, this is just something... fix it.
 			char aChar = '\u001a';
 			try {
 				while((aChar = (char) inputStream.read()) == ' ') { 
 				}
-				if(aChar == ch) {
+				if(Character.toLowerCase(aChar) == ch) {
 					return Character.MIN_CODE_POINT;
 				}
 			} catch (IOException e) {
@@ -52,6 +55,9 @@ public class HTMLread {
 		 * @param ch1, the char that marks the end of the URL
 		 * @param ch2, the char that represents EOF
 		 * @return the URL, or null if EOF is reached
+		 * 
+		 * NOT CASE SENSITIVE
+		 * 
 		 */		
 		public String readString(InputStream inputStream, char ch1, char ch2) {
 			String result = "";

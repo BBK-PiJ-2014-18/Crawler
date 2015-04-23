@@ -78,12 +78,33 @@ public class DatabaseManager {
 	}
 	
 	
-	public void writeURLtoTemp(int priority, URL urlToWrite) {
+	public boolean writeURLtoTemp(int priority, URL urlToWrite) {
 		
-		//TODO: don't allow duplicates to be written
-		
-		PrintWriter out = null;
+		//check if urlToWrite is already in file
 		File file = new File(TEMP_FILE);
+		BufferedReader in = null;
+		boolean urlPresent = false;
+		try {
+			in = new BufferedReader(new FileReader(file));
+			String line;
+			while((line = in.readLine()) != null) {
+				if(line.contains("\"" + urlToWrite.toString() + "\"")) {
+					urlPresent = true;
+					break;
+				}
+			}
+		} catch (FileNotFoundException ex) {
+			System.out.println("File " + file + " does not exist");
+		} catch (IOException ex) {
+			ex.printStackTrace();
+		} finally {
+			closeReader(in);
+		}
+		if(urlPresent) {
+			return false;
+		}
+		//if it is not present, write it to file
+		PrintWriter out = null;
 		try {
 			out = new PrintWriter(new BufferedWriter(new FileWriter(file,true)));
 			out.println(priority + ",\"" + urlToWrite.toString()+ "\"");
@@ -95,6 +116,7 @@ public class DatabaseManager {
 		} finally {
 			out.close();
 		}
+		return true;
 	}
 	
 	public URL getNextURL(int maxDepth) {

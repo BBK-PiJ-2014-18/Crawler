@@ -17,7 +17,7 @@ public class URLmanipulator {
 		String protocol = startingURL.getProtocol(); 	// e.g. "http"
 		String host = startingURL.getHost(); 			// e.g. "www.dcs.bbk.ac.uk"
 		String file = startingURL.getFile();			// e.g. "/seminars/index-external.php"
-		file = fixFrontAndBackForwardSlashOnFile(file);
+		file = addFinalForwardSlash(file, startingURL);
 		//delete any file name from end of path
 		file = file.substring(0, file.lastIndexOf('/') + 1);
 		URL result = null;
@@ -30,12 +30,22 @@ public class URLmanipulator {
 		result = normalizeURL(result);
 		return result;
 	}	
+
+	public URL makeFullUrl(String scrapedString, URL base) {
+		URL result = null;
+		try {
+			result = new URL(base, scrapedString);
+		} catch (MalformedURLException e) {
+			writeToExceptionLog("MalformedURL in makeFullUrl(). Base:" + base.toString() + " + String: " + scrapedString);
+		}
+		return result;
+	}
 	
 	public URL standardizeURL(URL startingURL) {
 		String protocol = startingURL.getProtocol(); 	// e.g. "http"
 		String host = startingURL.getHost(); 			// e.g. "www.dcs.bbk.ac.uk"
 		String file = startingURL.getFile();			// e.g. "/seminars/index-external.php"
-		file = fixFrontAndBackForwardSlashOnFile(file);
+//		file = addFinalForwardSlash(file, startingURL);
 		URL result = null;
 		try {
 			result = new URL(protocol, host, file);
@@ -47,14 +57,13 @@ public class URLmanipulator {
 		return result;
 	}
 	
-	private String fixFrontAndBackForwardSlashOnFile(String file) {
+	private String addFinalForwardSlash(String file, URL diagURL) {
 		//if there is no file (e.g file = "" so address is just host)
-		//or file part is just query (sitting right on top of host)
-		if(!file.contains("/")) {
-			file = "/" + file;
+		if(file == "") {
+			file = "/";
 		}
-		//if there is no ultimate "file name" or query part add "/" (e.g. just "/seminars" becomes "/seminars/"
-		if(!file.substring(file.lastIndexOf('/'), file.length()).contains(".")
+		//if file is not just query && doesn't have a 'real' file name (rather than pathy file name) or a query at the end
+		if(file.charAt(0) != '?' && !file.substring(file.lastIndexOf('/'), file.length()).contains(".")
 				&& !file.substring(file.lastIndexOf('/'), file.length()).contains("?")) {
 			file = file + '/';
 		}	
@@ -64,8 +73,9 @@ public class URLmanipulator {
 	//remove any  duplicate "/"s that have got in
 	private URL normalizeURL(URL dirtyURL) {
 		URL result = null;
+		URL noSpacesURL = fixSpacesURL(dirtyURL);
 		try {
-			URI temp = dirtyURL.toURI();
+			URI temp = noSpacesURL.toURI();
 			temp = temp.normalize();
 			result = temp.toURL();
 			//what order should these catches be in??
@@ -77,21 +87,20 @@ public class URLmanipulator {
 		return result;
 	}
 	
-	public URL makeFullUrl(String scrapedString, URL base) {
+	private URL fixSpacesURL(URL dirtyURL) {
 		URL result = null;
-		//scraped string can be "" when relative URL is just meant to take to <base url
-		if(!scrapedString.equals("") && scrapedString.charAt(0) == '/') {
-			scrapedString = scrapedString.substring(1, scrapedString.length());
-		}
+		String strWithSpaces = dirtyURL.toString();
 		try {
-			result = new URL(base, scrapedString);
+			result = new URL(strWithSpaces.replaceAll(" ", "%20"));
 		} catch (MalformedURLException e) {
-			writeToExceptionLog("MalformedURL in makeFullUrl(). Base:" + base.toString() + " + String: " + scrapedString);
+			writeToExceptionLog("MalformedURLException in fixSpacesURL(). Dirty URL:" + dirtyURL);
+			e.printStackTrace();
 		}
 		return result;
 	}
-	
-	private void writeToExceptionLog(String report) {
+		
+	//make this back to private
+	public void writeToExceptionLog(String report) {
 		PrintWriter out = null;
 		File file = new File(LOG_FILE);
 		try {

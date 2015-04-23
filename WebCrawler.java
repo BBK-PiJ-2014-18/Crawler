@@ -1,6 +1,8 @@
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
+import java.util.HashSet;
+import java.util.Set;
 
 public class WebCrawler {
 	
@@ -10,14 +12,19 @@ public class WebCrawler {
 	private int countDepth;
 	private int maxLinks;
 	private int maxDepth;
+	private Set<String> protocolsToIndex;
 	
 	public WebCrawler() {
 		this.dm = new DatabaseManager();
 		this.um = new URLmanipulator();
 		this.countLinks = 0;
 		this.countDepth = 0;
-		this.maxLinks = 10000;
+		this.maxLinks = 15;
 		this.maxDepth = 1000;
+		this.protocolsToIndex = new HashSet<String>();
+		protocolsToIndex.add("http");
+		protocolsToIndex.add("https");
+		protocolsToIndex.add("file");
 	}
 
 	//crawl should have database information as an argument
@@ -33,7 +40,7 @@ public class WebCrawler {
 			dm.intitalizeTempFile(startingURL);
 		}
 		countDepth++;
-		if(countDepth <= maxDepth && countLinks <= maxLinks) {
+		if(countDepth <= maxDepth && countLinks < maxLinks) {
 			System.out.println("Links = " + countLinks + " Depth = " + countDepth);
 			scrapePage(startingURL, base);
 		} else {
@@ -49,10 +56,20 @@ public class WebCrawler {
 			return;
 		}
 	}
+	
+	private void closeInputStream(InputStream inputStream) {
+		if(inputStream != null) {
+			try {
+				inputStream.close();
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+		}	
+	}
 
 	private void scrapePage(URL startingURL, URL base) {
-		InputStream inputStream;
-		// need to do the exceptions are done right - check PiJ notes examples
+		InputStream inputStream = null;
+		// get the base if it is specified in page's head
 		try {
 			inputStream = startingURL.openStream();
 			String scrapedString;
@@ -60,14 +77,18 @@ public class WebCrawler {
 				base = new URL(scrapedString);
 				if (base != null) {
 					base = um.standardizeURL(base);
+					//can i break here, as found base and assigned it
 				}
 			}
-			inputStream.close();
 		} catch (IOException e) {
 			System.out.println("File Not Found: " + startingURL);
+			return;
+		} finally {
+			closeInputStream(inputStream);
 		}
+		// scrape all URLs from page
 		URL result = null;
-		// need to do the exceptions are done right - check PiJ notes examples
+		inputStream = null;
 		try {
 			inputStream = startingURL.openStream();
 			String scrapedString;
@@ -81,18 +102,39 @@ public class WebCrawler {
 				}
 				if (result != null) {
 					if(countLinks <= maxLinks) {
-						dm.writeURLtoTemp(countDepth, result);
-						countLinks++;
+						
+						boolean added = dm.writeURLtoTemp(countDepth, result);
+						if (added) {
+							countLinks++;
+						
+						//BUG FINDER SECTION	
+						//temporary to fill up exception log with diagnostics of files not found
+//						InputStream tester = null;
+//						try {
+//							tester = result.openStream();
+//						} catch (IOException e) {
+//							System.out.println("  FNF: scst: " + scrapedString + " base: " + base + " = result: " + result.toString());
+//							um.writeToExceptionLog("x");
+//							um.writeToExceptionLog("  FNF: startingURL: " + startingURL + " base: " + base);
+//							um.writeToExceptionLog("  FNF: scst: " + scrapedString + " base: " + base + " = result: " + result.toString());
+//							um.writeToExceptionLog("x");
+//						} finally {
+//							closeInputStream(tester);
+//						}
+						//ENDS: temporary to fill up exception log with diagnostics of files not found
+						
+						
+						}
 					} else {
 						return;
 					}
 				}
 			}
-			inputStream.close();
 		} catch (IOException e) {
 			System.out.println("File Not Found: " + startingURL);
+		} finally {
+			closeInputStream(inputStream);
 		}
-		System.out.println("ZZ");
 	}
 	
 
@@ -201,11 +243,11 @@ public class WebCrawler {
 		return str;
 	}	
 	
-	// need to set up constructor to have a set of allowed protocols, 
-	// this just placeholder so testing doesn't fail
 	private URL filterURL(URL candidateURL) {
 		String protocol = candidateURL.getProtocol();
-		if(protocol.equals("mailto")) {
+		if(!protocolsToIndex.contains(protocol)) {
+			//delete sop
+			System.out.println(protocol);
 			return null;
 		}
 		return candidateURL;
