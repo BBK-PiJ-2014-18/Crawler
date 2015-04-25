@@ -15,6 +15,7 @@ import org.junit.Test;
 import org.junit.rules.ExpectedException;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNull;
 
 public class WebCrawlerTest {
 
@@ -127,7 +128,6 @@ public class WebCrawlerTest {
 		}
 	}
 	
-
 	// TESTS START HERE
 	
 	@Test
@@ -219,7 +219,6 @@ public class WebCrawlerTest {
 		assertEquals(expected, actual);
 	}
 	
-	
 	//getting base ref from a starting URL
 	
 	@Test
@@ -231,8 +230,6 @@ public class WebCrawlerTest {
 		assertEquals(expected, actual);
 	}
 	
-	// favourite x test
-	
 	@Test
 	public void testCreatingBaseUrlFromStartingUrlNoFinalFowardSlash() {
 		WebCrawler wc = new WebCrawler();
@@ -241,6 +238,16 @@ public class WebCrawlerTest {
 		String expected = "START BASE = http://www.dcs.bbk.ac.uk/";
 		assertEquals(expected, actual);
 	}
+	
+	@Test
+	public void testDiffStartingURL() {
+		WebCrawler wc = new WebCrawler();
+		wc.crawl(helpMakeURL("http://www.bbc.co.uk/"));
+		String actual = helpReadAttributesFileLine(3);
+		String expected = "START BASE = http://www.bbc.co.uk/";
+		assertEquals(expected, actual);
+	}
+	
 	
 	@Test
 	public void testCreatingBaseUrlFromStartingUrlWithIndex() {
@@ -371,7 +378,6 @@ public class WebCrawlerTest {
 	
 	//SCRAPING URLS
 	
-	
 	@Test
 	public void testScrapeFirstURLfromFile() {
 		WebCrawler wc = new WebCrawler();
@@ -392,7 +398,6 @@ public class WebCrawlerTest {
 		assertEquals(expected, actual);
 	}
 
-	
 	@Test
 	public void testFullTestHTMLfileWhereWeFindBase() {
 		WebCrawler wc = new WebCrawler();
@@ -404,7 +409,6 @@ public class WebCrawlerTest {
 		expected = "0,\"file:Example/box.html\"";
 		assertEquals(expected, actual);
 	}
-	
 	
 	@Test
 	public void testScrapeFirstBaseWithCapsONE() {
@@ -476,7 +480,6 @@ public class WebCrawlerTest {
 		assertEquals(expected, actual);
 	}
 	
-
 	@Test
 	public void testScrapeFirstLinkWithSpacesTWO() {
 		WebCrawler wc = new WebCrawler();
@@ -525,6 +528,48 @@ public class WebCrawlerTest {
 		expected = "0,\"file:./Crawler/TestHtml/threeCAP.html\"";
 		assertEquals(expected, actual);
 	}
+
+	@Test
+	public void testFullTestHTMLfileProblemFormatsThatLinksSplitOverLines() {
+		WebCrawler wc = new WebCrawler();
+		wc.crawl(helpMakeURL("file:./Crawler/TestHtml/ProblemFormatsTWO.html"));
+		String actual = helpReadTempFileLine(3);
+		String expected = "0,\"file:./Crawler/TestHtml/axe.html\"";
+		assertEquals(expected, actual);
+		actual = helpReadTempFileLine(4);
+		expected = "0,\"file:./Crawler/TestHtml/box.html\"";
+		assertEquals(expected, actual);
+		actual = helpReadTempFileLine(5);
+		expected = "0,\"file:./Crawler/TestHtml/cat.html\"";
+		assertEquals(expected, actual);
+		actual = helpReadTempFileLine(6);
+		expected = "0,\"file:./Crawler/TestHtml/dog.html\"";
+		assertEquals(expected, actual);
+		actual = helpReadTempFileLine(7);
+		expected = "0,\"file:./Crawler/TestHtml/emu.html\"";
+		assertEquals(expected, actual);
+		actual = helpReadTempFileLine(8);
+		expected = "0,\"file:./Crawler/TestHtml/fish.html\"";
+		assertEquals(expected, actual);
+		actual = helpReadTempFileLine(9);
+		expected = "0,\"file:./Crawler/TestHtml/goat.html\"";
+		assertEquals(expected, actual);
+		actual = helpReadTempFileLine(10);
+		expected = "0,\"file:./Crawler/TestHtml/hen.html\"";
+		assertEquals(expected, actual);
+		actual = helpReadTempFileLine(11);
+		expected = "0,\"file:./Crawler/TestHtml/imp.html\"";
+		assertEquals(expected, actual);
+		actual = helpReadTempFileLine(12);
+		expected = "0,\"file:./Crawler/TestHtml/jag.html\"";
+		assertEquals(expected, actual);
+		actual = helpReadTempFileLine(13);
+		expected = "0,\"file:./Crawler/TestHtml/kite.html\"";
+		assertEquals(expected, actual);
+		actual = helpReadTempFileLine(14);
+		//link never ends with " so readstring() to the end of file & return "", but never gets into database.
+		assertNull(actual);
+	}
 	
 	@Test
 	public void testScrapeBasePlusRelativeURLThatIsEmptyStringfromFile() {
@@ -556,67 +601,6 @@ public class WebCrawlerTest {
 		assertEquals(expected, actual);
 	}
 
-//		MalformedURL in makeFullUrl(). Base:http://www.bbk.ac.uk/front-page/ + String: javascript:this.print();
-//		MalformedURL in makeFullUrl(). Base:http://www.bbk.ac.uk/prospective/open-evenings/open/ + String: javascript:this.print();
-//		MalformedURL in makeFullUrl(). Base:http://ieeexplore.ieee.org/stamp/ + String: javascript:Modal.refresh('/xpl/mwForgotUserPasswordIntro.jsp')
-//		MalformedURL in makeFullUrl(). Base:http://ieeexplore.ieee.org/stamp/ + String: javascript:Modal.refresh('/xpl/mwInstForgotUserNamePassword.jsp')
-//		MalformedURL in makeFullUrl(). Base:http://ieeexplore.ieee.org/stamp/ + String: javascript:redirectToWayf()
-//		MalformedURL in makeFullUrl(). Base:http://ieeexplore.ieee.org/stamp/ + String: javascript:Modal.show('/xpl/mwMemberSignIn.jsp')
-//		MalformedURL in makeFullUrl(). Base:http://www.bbk.ac.uk/news/web-pioneer-gives-2015-andrew-booth-memorial-lecture-at-birkbeck-1/ + String: javascript:this.print();
-//		MalformedURL in makeFullUrl(). Base:http://www.bbk.ac.uk/prospective/open-evenings/open/ + String: javascript:this.print();
-//
-//
-//		REAL Problems:
-//		====================================================================
-//		quirky html link - don't understand what's intended:
-//		x
-//		  FNF: startingURL: http://www.dcs.bbk.ac.uk/staff/ base: http://www.dcs.bbk.ac.uk/staff/
-//		  FNF: scst: &#10;                     http://www.dcs.bbk.ac.uk/staff/staffperson.php?name=andrea base: http://www.dcs.bbk.ac.uk/staff/ = result: http://www.dcs.bbk.ac.uk/staff/&/
-//		x
-//		====================================================================
-//		dots messy (remove if still in after made?)
-//		x
-//		  FNF: startingURL: http://www.dcs.bbk.ac.uk/news/ base: http://www.dcs.bbk.ac.uk/news/
-//		  FNF: scst: ../../r/doc/Oracle-CSI-Kernel.pdf base: http://www.dcs.bbk.ac.uk/news/ = result: http://www.dcs.bbk.ac.uk/../r/doc/Oracle-CSI-Kernel.pdf
-//		x
-//		x
-//		  FNF: startingURL: http://www.dcs.bbk.ac.uk/news/ base: http://www.dcs.bbk.ac.uk/news/
-//		  FNF: scst: ../../50years/ base: http://www.dcs.bbk.ac.uk/news/ = result: http://www.dcs.bbk.ac.uk/../50years/
-//		x
-//		====================================================================
-//		port problem!
-//		x
-//		  FNF: startingURL: http://www.dcs.bbk.ac.uk/news/ base: http://www.dcs.bbk.ac.uk/news/
-//		  FNF: scst: http://pamir.dia.uniroma3.it:8080/SWIM2013/Home.html base: http://www.dcs.bbk.ac.uk/news/ = result: http://pamir.dia.uniroma3.it/SWIM2013/Home.html
-//		   																					  scst copy from line above: http://pamir.dia.uniroma3.it:8080/SWIM2013/Home.html
-//		x
-//	====================================================================
-//	Don't know problem! maybe line break in their html?
-//	x
-//	  FNF: startingURL: http://libeproject.it/?lang=en base: http://libeproject.it/
-//	  FNF: scst: http://blogs.kqed.org/mindshift/2014/07/5-essential-insights-about-mobile-learning/ base: http://libeproject.it/ 
-//	   = result: http://blogs.kqed.org/mindshift/2014/07/5-essential-insights-about-mobile-learning/
-//	x
-//	x
-//	  FNF: startingURL: http://libeproject.it/?lang=en base: http://libeproject.it/
-//	  FNF: scst: http://blogs.kqed.org/mindshift/2013/09/reinventing-school-new-learning-environment-ecosystems-for-inquiry-learning/ base: http://libeproject.it/ = result: http://blogs.kqed.org/mindshift/2013/09/reinventing-school-new-learning-environment-ecosystems-for-inquiry-learning/
-//	x
-	
-	
-	
-	
-//	====================================================================
-//	don't know problem! maybe the 2 in the host part?
-//	x
-//	  FNF: startingURL: http://www.dcs.bbk.ac.uk/research/projects.html base: http://www.dcs.bbk.ac.uk/research/
-//	  FNF: scst: http://www.italk2learn.eu/ base: http://www.dcs.bbk.ac.uk/research/ = result: http://www.italk2learn.eu/
-//	x
-//		(here addding the final / doesn't seem to matter...)
-//	x
-//  	  FNF: startingURL: http://www.dcs.bbk.ac.uk/news/ base: http://www.dcs.bbk.ac.uk/news/
-//      FNF: scst: http://italk2learn.eu base: http://www.dcs.bbk.ac.uk/news/ = result: http://italk2learn.eu/
-//	x
-	
 	@Test
 	public void testDealWithURLWithNumbersInIt() {
 		WebCrawler wc = new WebCrawler();
@@ -626,20 +610,6 @@ public class WebCrawlerTest {
 		String expected = "0,\"http://italk2learn.eu\"";
 		assertEquals(expected, actual);
 	}
-	
-//SOLVED PROBLEMS	
-	
-	
-//		====================================================================
-//		I've added a / at end of result?
-//		x
-//		  FNF: startingURL: http://www.dcs.bbk.ac.uk/news/ base: http://www.dcs.bbk.ac.uk/news/
-//		  FNF: scst: http://www.springer.com/engineering/journal/12530 base: http://www.dcs.bbk.ac.uk/news/ = result: http://www.springer.com/engineering/journal/12530/
-//		x
-//		x
-//		  FNF: startingURL: http://www.theguardian.com/public-leaders-network/2015/apr/07/uk-public-sector-slow-internet-of-things/ base: http://www.theguardian.com/public-leaders-network/2015/apr/07/uk-public-sector-slow-internet-of-things/
-//		  FNF: scst: https://profile.theguardian.com/signin base: http://www.theguardian.com/public-leaders-network/2015/apr/07/uk-public-sector-slow-internet-of-things/ = result: https://profile.theguardian.com/signin/
-//		x
 	
 
 	@Test
@@ -662,20 +632,6 @@ public class WebCrawlerTest {
 		assertEquals(expected, actual);
 	}
 	
-	
-
-//
-//		END OF PROBLEMS TO SOLVE
-//
-//		====================================================================
-//		====================================================================
-//		====================================================================	
-	
-	
-	
-//what, if anything, to do about HTML Global Attributes? Need to pick href as next after <a as can't 
-//check presence of a space after <a	
-
 	@Test
 	public void testFullTestHTMLfileBeastsThatWeScrapeFilesInCorrectOrder() {
 		WebCrawler wc = new WebCrawler();
@@ -700,6 +656,3 @@ public class WebCrawlerTest {
 		assertEquals(expected, actual);
 	}
 }
-
-
-

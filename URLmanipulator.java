@@ -25,12 +25,24 @@ public class URLmanipulator {
 			result = new URL(protocol, host, file);
 		} catch (MalformedURLException e) {
 			writeToExceptionLog("MalformedURLException in makeBase(). startingURL:" + startingURL.toString());			
-			e.printStackTrace();
 		}
 		result = normalizeURL(result);
 		return result;
 	}	
 
+	private String addFinalForwardSlash(String file, URL diagURL) {
+		//if there is no file (e.g file = "" so address is just host)
+		if(file == "") {
+			file = "/";
+		}
+		//if file is not just query && doesn't have a 'real' file name (rather than pathy file name) or a query at the end
+		if(file.charAt(0) != '?' && !file.substring(file.lastIndexOf('/'), file.length()).contains(".")
+				&& !file.substring(file.lastIndexOf('/'), file.length()).contains("?")) {
+			file = file + '/';
+		}	
+		return file;
+	}
+	
 	public URL makeFullUrl(String scrapedString, URL base) {
 		URL result = null;
 		try {
@@ -45,7 +57,6 @@ public class URLmanipulator {
 		String protocol = startingURL.getProtocol(); 	// e.g. "http"
 		String host = startingURL.getHost(); 			// e.g. "www.dcs.bbk.ac.uk"
 		String file = startingURL.getFile();			// e.g. "/seminars/index-external.php"
-//		file = addFinalForwardSlash(file, startingURL);
 		URL result = null;
 		try {
 			result = new URL(protocol, host, file);
@@ -55,19 +66,6 @@ public class URLmanipulator {
 		}
 		result = normalizeURL(result);		
 		return result;
-	}
-	
-	private String addFinalForwardSlash(String file, URL diagURL) {
-		//if there is no file (e.g file = "" so address is just host)
-		if(file == "") {
-			file = "/";
-		}
-		//if file is not just query && doesn't have a 'real' file name (rather than pathy file name) or a query at the end
-		if(file.charAt(0) != '?' && !file.substring(file.lastIndexOf('/'), file.length()).contains(".")
-				&& !file.substring(file.lastIndexOf('/'), file.length()).contains("?")) {
-			file = file + '/';
-		}	
-		return file;
 	}
 	
 	//remove any  duplicate "/"s that have got in
@@ -99,8 +97,7 @@ public class URLmanipulator {
 		return result;
 	}
 		
-	//make this back to private
-	public void writeToExceptionLog(String report) {
+	private void writeToExceptionLog(String report) {
 		PrintWriter out = null;
 		File file = new File(LOG_FILE);
 		try {

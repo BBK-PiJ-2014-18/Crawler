@@ -5,11 +5,11 @@ import java.lang.Character;
 public class HTMLread {
 	
 		/**
-		 * 	CASE SENSITIVE	  
-		 * @param inputStream
-		 * @param ch1, the char to read until
-		 * @param ch2, the end of file char ?? [(char) -1]
-		 * @return true if ch1 found, false if EOF reached.
+		 * HTML is consumed until one of true chars are encountered, or the stream has been fully consumed. 
+		 * @param the inputStream to be consumed
+		 * @param ch1, a char to read until encountered
+		 * @param ch2, a char to read until encountered
+		 * @return true if ch1 found, false if ch2 encountered (both ignoring case), otherwise false is returned.
 		 */
 		public boolean readUntil(InputStream inputStream, char ch1, char ch2) {
 			ch1 = Character.toLowerCase(ch1);
@@ -28,46 +28,50 @@ public class HTMLread {
 		}
 		
 		/**
-		 * CASE SENSITIVE
-		 * @param inputStream
-		 * @param ch, the char sought...
-		 * @return the first not blank char if that is not ch; if it is ch then Character.MIN_CODE_POINT
+		 * HTML is consumed until a non-white space char is encountered, if that char is ch then
+		 * Character.MIN_VALUE is returned, otherwise that char is returned.
+		 * @param the inputStream to be consumed
+		 * @param ch, the char to read whitespace until encountered (ignoring case)
+		 * @return the first not whitespace char if that is not ch; if it is ch then Character.MIN_VALUE
 		 */	
 		public char skipSpace(InputStream inputStream, char ch) {
 			ch = Character.toLowerCase(ch);
-			//it's not cool to have to initialize aChar here... but err, this is just something... fix it.
-			char aChar = '\u001a';
+			char aChar = (char) -1;
 			try {
-				while((aChar = (char) inputStream.read()) == ' ') { 
+				while(Character.isWhitespace(aChar = (char) inputStream.read())) { 
+					//just consume white space 
 				}
 				if(Character.toLowerCase(aChar) == ch) {
-					return Character.MIN_CODE_POINT;
+					return Character.MIN_VALUE;
 				}
 			} catch (IOException e) {
 				e.printStackTrace();
 			}
 			return aChar;
 		}
-
+		
 		/**
-		 * 
+		 * Reads the input stream until ch1 is encountered (returning what is read up to but not including ch1).
+		 * If ch2 is encountered in the process then null is returned. If neither ch1 or ch2 are encountered then an
+		 * empty string is returned.
 		 * @param inputStream
-		 * @param ch1, the char that marks the end of the URL
-		 * @param ch2, the char that represents EOF
-		 * @return the URL, or null if EOF is reached
-		 * 
-		 * NOT CASE SENSITIVE
-		 * 
+		 * @param ch1, a char that stops the reading of a string
+		 * @param ch2, a char that stops the reading of a string
+		 * @return the string read if reading was stopped by ch1, or null if the terminating char was ch2 (if neither char is 
+		 * encountered then an empty string "" is returned). Any line breaks encountered while reading are 
+		 * not included in the returned string.
 		 */		
 		public String readString(InputStream inputStream, char ch1, char ch2) {
 			String result = "";
 			char aChar;
 			try {	
-				while((aChar = (char) inputStream.read()) != ch1) {
+				while((aChar = (char) inputStream.read()) != ch1 && aChar != ch2) {
 					if(aChar == ch2) {
 						return null;
-					}	
-					result += aChar;
+					}
+					if(aChar != '\n' && aChar != '\r') {
+						result += aChar;
+					}
 				}	
 			} catch (IOException e) {
 				e.printStackTrace();

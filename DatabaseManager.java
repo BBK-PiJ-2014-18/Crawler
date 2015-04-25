@@ -120,7 +120,6 @@ public class DatabaseManager {
 	}
 	
 	public URL getNextURL(int maxDepth) {
-		
 		//return the lowest priority URL or null if none <= maxDepth or all are zero
 		//make the priority of the returned URL = 0;
 		URL result = null;
@@ -157,10 +156,6 @@ public class DatabaseManager {
 		bFile.renameTo(aFile);
 		return result;
 	}
-	
-	
-	
-	
 	
 	private void closeReader(Reader reader) {
 		try {
