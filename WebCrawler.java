@@ -4,7 +4,7 @@ import java.net.URL;
 import java.util.HashSet;
 import java.util.Set;
 
-public class WebCrawler {
+public class WebCrawler implements WebCrawlerInterface {
 	
 	private DatabaseManager dm;
 	private URLmanipulator um;
@@ -19,7 +19,7 @@ public class WebCrawler {
 		this.um = new URLmanipulator();
 		this.countLinks = 1;
 		this.countDepth = 0;
-		this.maxLinks = 15000;
+		this.maxLinks = 15;
 		this.maxDepth = 1000;
 		this.protocolsToIndex = new HashSet<String>();
 		protocolsToIndex.add("http");
@@ -47,7 +47,7 @@ public class WebCrawler {
 			return;
 		}
 		
-		//INSERT: searchPage() here
+		search(currentPageURL);
 		
 		URL nextURL = dm.getNextURL(maxDepth);
 		if(nextURL != null) {
