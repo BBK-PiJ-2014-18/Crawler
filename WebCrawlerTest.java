@@ -656,4 +656,81 @@ public class WebCrawlerTest {
 		expected = "0,\"file:./Crawler/TestHtml/bearbig.html\"";
 		assertEquals(expected, actual);
 	}
+	
+	@Test
+	public void testProgrammerSetsMaxLinksAndMaxDepthLinksLimitFourReachedFirst() {
+		WebCrawler wc = new WebCrawler(4,500);
+		wc.crawl(helpMakeURL("file:./Crawler/TestHtml/beasts.html"));
+		String actual = helpReadTempFileLine(3);
+		String expected = "0,\"file:./Crawler/TestHtml/ant.html\"";
+		assertEquals(expected, actual);
+		actual = helpReadTempFileLine(4);
+		expected = "0,\"file:./Crawler/TestHtml/bear.html\"";
+		assertEquals(expected, actual);
+		actual = helpReadTempFileLine(5);
+		expected = "2,\"file:./Crawler/TestHtml/antsmall.html\"";
+		assertEquals(expected, actual);
+		actual = helpReadTempFileLine(6);
+		expected = "2,\"file:./Crawler/TestHtml/antbig.html\"";
+		assertEquals(expected, actual);		
+		actual = helpReadTempFileLine(7);
+		assertNull(expected, actual);
+	}
+	
+	@Test
+	public void testProgrammerSetsMaxLinksAndMaxDepthLinksLimitOneReachedFirst() {
+		WebCrawler wc = new WebCrawler(1,500);
+		wc.crawl(helpMakeURL("file:./Crawler/TestHtml/beasts.html"));
+		String actual = helpReadTempFileLine(3);
+		String expected = "0,\"file:./Crawler/TestHtml/ant.html\"";
+		assertEquals(expected, actual);
+		actual = helpReadTempFileLine(4);
+		assertNull(actual);
+	}
+	
+	@Test
+	public void testProgrammerSetsMaxLinksAndMaxDepthLinksLimitZeroReachedFirst() {
+		WebCrawler wc = new WebCrawler(0,500);
+		wc.crawl(helpMakeURL("file:./Crawler/TestHtml/beasts.html"));
+		String actual = helpReadTempFileLine(3);
+		actual = helpReadTempFileLine(4);
+		assertNull(actual);
+	}	
+	
+	@Test
+	public void testProgrammerSetsMaxLinksAndMaxDepthLinksLimitMinusONeReachedFirst() {
+		thrown.expect(IllegalArgumentException.class);
+		thrown.expectMessage("Argument must be positive");
+		WebCrawler wc = new WebCrawler(-1,500);
+		wc.crawl(helpMakeURL("file:./Crawler/TestHtml/beasts.html"));
+	}
+
+
+	@Test
+	public void testProgrammerSetsMaxLinksAndMaxDepthDepthLimitThreeReachedFirst() {
+		WebCrawler wc = new WebCrawler(500,3);
+		wc.crawl(helpMakeURL("file:./Crawler/TestHtml/beasts.html"));
+		String actual = helpReadTempFileLine(3);
+		String expected = "0,\"file:./Crawler/TestHtml/ant.html\"";
+		assertEquals(expected, actual);
+		actual = helpReadTempFileLine(4);
+		expected = "0,\"file:./Crawler/TestHtml/bear.html\"";
+		assertEquals(expected, actual);
+		actual = helpReadTempFileLine(5);
+		expected = "0,\"file:./Crawler/TestHtml/antsmall.html\"";
+		assertEquals(expected, actual);
+		actual = helpReadTempFileLine(6);
+		expected = "2,\"file:./Crawler/TestHtml/antbig.html\"";
+		assertEquals(expected, actual);
+		actual = helpReadTempFileLine(7);
+		expected = "3,\"file:./Crawler/TestHtml/bearsmall.html\"";
+		assertEquals(expected, actual);
+		actual = helpReadTempFileLine(8);
+		expected = "3,\"file:./Crawler/TestHtml/bearbig.html\"";
+		assertEquals(expected, actual);
+	}
+	
+
+
+
 }

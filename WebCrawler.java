@@ -19,14 +19,31 @@ public class WebCrawler implements WebCrawlerInterface {
 		this.um = new URLmanipulator();
 		this.countLinks = 1;
 		this.countDepth = 0;
-		this.maxLinks = 15;
-		this.maxDepth = 1000;
+		this.maxLinks = 50;
+		this.maxDepth = 20;
+		setProtocolsToIndex();
+	}
+
+	public WebCrawler(int maxLinks, int maxDepth) {
+		this.dm = new DatabaseManager();
+		this.um = new URLmanipulator();
+		this.countLinks = 1;
+		this.countDepth = 0;
+		if (maxLinks < 0 || maxDepth < 0) {
+			throw new IllegalArgumentException("Argument must be positive");
+		}
+		this.maxLinks = maxLinks;
+		this.maxDepth = maxDepth;
+		setProtocolsToIndex();
+	}
+	
+	private void setProtocolsToIndex() {
 		this.protocolsToIndex = new HashSet<String>();
 		protocolsToIndex.add("http");
 		protocolsToIndex.add("https");
-		protocolsToIndex.add("file");
+		protocolsToIndex.add("file");		
 	}
-
+	
 	//crawl should have database information as an argument
 	public void crawl(URL currentPageURL)  {
 		if(currentPageURL == null){
@@ -39,22 +56,21 @@ public class WebCrawler implements WebCrawlerInterface {
 			dm.saveCrawlAttributes(currentPageURL, currentBase);
 			dm.intitalizeTempFile(currentPageURL);
 		}
-		countDepth++;
+		
 		if(countDepth <= maxDepth && countLinks <= maxLinks) {
 			System.out.println("Links = " + countLinks + " Depth = " + countDepth);
 			scrapePage(currentPageURL, currentBase);
+			countDepth++;
 		} else {
 			return;
 		}
-		
 		search(currentPageURL);
-		
 		URL nextURL = dm.getNextURL(maxDepth);
 		if(nextURL != null) {
 			crawl(nextURL);
-		} else {
-			return;
 		}
+		return;
+		
 	}
 	
 	private void scrapePage(URL pageToScrape, URL base) {
