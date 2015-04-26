@@ -1,7 +1,17 @@
-### Crawler for CW5
+### Crawler for CW5...
 
-##### How to run the system
+##### ...will finish on Monday 27th April...
 
-This is how to run the system.
+Need to do last few things:
 
-More about how to run the system.
+Tests to ensure stops after right number of links/depth.
+Naming of database file passed in crawl method rather than fixed.
+Save searches() true to a datafile.
+Think about whether some methods should be static.
+JavaDoc (and maybe an extra interface or two).
+A script to demo how to use the system.
+The content of this readme...
+
+
+
+
