@@ -10,7 +10,6 @@ import java.net.URL;
 
 
 import org.junit.BeforeClass;
-import org.junit.Ignore;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
@@ -140,10 +139,13 @@ public class WebCrawlerTest {
 	}
 	
 	//come back to this when set up wider sequence
-	@ Ignore @Test
+	@Test
 	public void testStartingURLValidButDoesNotExist() {
 		WebCrawler wc = new WebCrawler();
 		wc.crawl(helpMakeURL("http://www.dcs.bbk.ac.uk/monkeys.html"), "crawlsearchresults.txt");
+		String actual = helpReadAttributesFileLine(5);
+		String expected = "PAGE NOT FOUND: http://www.dcs.bbk.ac.uk/monkeys.html";
+		assertEquals(expected,actual);		
 	}
 	
 	//tests on cleaning startingURL so saves clean for checking of duplicates

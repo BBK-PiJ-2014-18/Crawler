@@ -6,7 +6,7 @@ import java.util.Set;
 
 public class WebCrawler implements WebCrawlerInterface {
 	
-	private static final int DEFAULT_MAX_LINKS = 100;
+	private static final int DEFAULT_MAX_LINKS = 200;
 	private static final int DEFAULT_MAX_DEPTH = 20;
 	
 	private DatabaseManager dm;
@@ -59,13 +59,9 @@ public class WebCrawler implements WebCrawlerInterface {
 			dm.intitalizeTempFile(currentPageURL);
 		}
 		countDepth++;
-//		if(countLinks <= maxLinks) {
-			scrapePage(currentPageURL, currentBase);
-			if(search(currentPageURL)) {
-				dm.writeToSearchResultsFile(currentPageURL, outputFileName);	
-//			}
-		} else {
-			return;
+		scrapePage(currentPageURL, currentBase);
+		if(search(currentPageURL)) {
+			dm.writeToSearchResultsFile(currentPageURL, outputFileName);	
 		}
 		URL nextURL = null;	
 		if(countLinks < maxLinks) {
@@ -112,7 +108,7 @@ public class WebCrawler implements WebCrawlerInterface {
 				}
 			}
 		} catch (IOException e) {
-			System.out.println("File Not Found: " + pageToScrape);
+			um.writeToExceptionLog("PAGE NOT FOUND: " + pageToScrape.toString());			
 		} finally {
 			closeInputStream(inputStream);
 		}

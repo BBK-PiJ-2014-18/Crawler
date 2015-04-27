@@ -26,7 +26,6 @@ public class DatabaseManager {
 		makeDirectory("./Crawler/Data");
 		deleteFileIfExists(TEMP_FILE);
 		deleteFileIfExists(SEARCH_RESULT_DIRECTORY + outputFileName);
-		//delete others?
 	}
 	
 	private void deleteFileIfExists(String fileToDelete) {
@@ -51,7 +50,7 @@ public class DatabaseManager {
 			out.println("CRAWL ATTRIBUTES");
 			out.println("STARTING URL = " + startingURL.toString());
 			out.println("START BASE = " + base.toString());
-			out.println("EOF");
+			out.println("EXCEPTION REPORTS FROM THIS CRAWL");
 		} catch (FileNotFoundException ex) {
 			System.out.println("Cannot write to file " + file + ".");
 		} finally {

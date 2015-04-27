@@ -10,8 +10,8 @@ import java.net.URISyntaxException;
 import java.net.URL;
 
 public class URLmanipulator {
-	
-	private static final String LOG_FILE = "./Crawler/Data/crawllog.txt";
+
+	private static final String ATTRIBUTES_FILE = "./Crawler/Data/crawlattributes.txt";
 
 	public URL makeBase(URL startingURL) {
 		String protocol = startingURL.getProtocol(); 	// e.g. "http"
@@ -97,9 +97,9 @@ public class URLmanipulator {
 		return result;
 	}
 		
-	private void writeToExceptionLog(String report) {
+	public void writeToExceptionLog(String report) {
 		PrintWriter out = null;
-		File file = new File(LOG_FILE);
+		File file = new File(ATTRIBUTES_FILE);
 		try {
 			out = new PrintWriter(new BufferedWriter(new FileWriter(file,true)));
 			out.write(report + "\n");
