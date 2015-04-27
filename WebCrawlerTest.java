@@ -23,6 +23,8 @@ public class WebCrawlerTest {
 	private static final String TEMP_FILE = "./Crawler/Data/crawltemp.txt";
 	private static final String ATTRIBUTES_FILE = "./Crawler/Data/crawlattributes.txt";
 	
+	
+	
 	@BeforeClass
 	public static void doOnceAtStartOfTests() {
 		File f = new File("./Crawler/TestHtml");
@@ -720,6 +722,38 @@ public class WebCrawlerTest {
 		expected = "0,\"file:./Crawler/TestHtml/antsmall.html\"";
 		assertEquals(expected, actual);
 		actual = helpReadTempFileLine(6);
+		expected = "0,\"file:./Crawler/TestHtml/antbig.html\"";
+		assertEquals(expected, actual);
+		actual = helpReadTempFileLine(7);
+		expected = "0,\"file:./Crawler/TestHtml/bearsmall.html\"";
+		assertEquals(expected, actual);
+		actual = helpReadTempFileLine(8);
+		expected = "0,\"file:./Crawler/TestHtml/bearbig.html\"";
+		assertEquals(expected, actual);
+		actual = helpReadTempFileLine(9);
+		expected = "6,\"file:./Crawler/TestHtml/bearsmallpolar.html\"";
+		assertEquals(expected, actual);
+		actual = helpReadTempFileLine(10);
+		expected = "6,\"file:./Crawler/TestHtml/bearsmallbrown.html\"";
+		assertEquals(expected, actual);
+		actual = helpReadTempFileLine(11);
+		assertNull(actual);
+	}
+	
+	@Test
+	public void testProgrammerSetsMaxLinksAndMaxDepthDepthLimitOneReachedFirst() {
+		WebCrawler wc = new WebCrawler(500,1);
+		wc.crawl(helpMakeURL("file:./Crawler/TestHtml/beasts.html"));
+		String actual = helpReadTempFileLine(3);
+		String expected = "0,\"file:./Crawler/TestHtml/ant.html\"";
+		assertEquals(expected, actual);
+		actual = helpReadTempFileLine(4);
+		expected = "0,\"file:./Crawler/TestHtml/bear.html\"";
+		assertEquals(expected, actual);
+		actual = helpReadTempFileLine(5);
+		expected = "2,\"file:./Crawler/TestHtml/antsmall.html\"";
+		assertEquals(expected, actual);
+		actual = helpReadTempFileLine(6);
 		expected = "2,\"file:./Crawler/TestHtml/antbig.html\"";
 		assertEquals(expected, actual);
 		actual = helpReadTempFileLine(7);
@@ -728,6 +762,22 @@ public class WebCrawlerTest {
 		actual = helpReadTempFileLine(8);
 		expected = "3,\"file:./Crawler/TestHtml/bearbig.html\"";
 		assertEquals(expected, actual);
+		actual = helpReadTempFileLine(9);
+		assertNull(actual);
+	}
+	
+	@Test
+	public void testProgrammerSetsMaxLinksAndMaxDepthDepthLimitZeroReachedFirst() {
+		WebCrawler wc = new WebCrawler(500,0);
+		wc.crawl(helpMakeURL("file:./Crawler/TestHtml/beasts.html"));
+		String actual = helpReadTempFileLine(3);
+		String expected = "1,\"file:./Crawler/TestHtml/ant.html\"";
+		assertEquals(expected, actual);
+		actual = helpReadTempFileLine(4);
+		expected = "1,\"file:./Crawler/TestHtml/bear.html\"";
+		assertEquals(expected, actual);
+		actual = helpReadTempFileLine(5);
+		assertNull(actual);
 	}
 	
 

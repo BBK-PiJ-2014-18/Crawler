@@ -6,6 +6,9 @@ import java.util.Set;
 
 public class WebCrawler implements WebCrawlerInterface {
 	
+	private static final int DEFAULT_MAX_LINKS = 100;
+	private static final int DEFAULT_MAX_DEPTH = 20;
+	
 	private DatabaseManager dm;
 	private URLmanipulator um;
 	private int countLinks;
@@ -19,8 +22,8 @@ public class WebCrawler implements WebCrawlerInterface {
 		this.um = new URLmanipulator();
 		this.countLinks = 1;
 		this.countDepth = 0;
-		this.maxLinks = 50;
-		this.maxDepth = 20;
+		this.maxLinks = DEFAULT_MAX_LINKS;
+		this.maxDepth = DEFAULT_MAX_DEPTH;
 		setProtocolsToIndex();
 	}
 
@@ -56,11 +59,9 @@ public class WebCrawler implements WebCrawlerInterface {
 			dm.saveCrawlAttributes(currentPageURL, currentBase);
 			dm.intitalizeTempFile(currentPageURL);
 		}
-		
-		if(countDepth <= maxDepth && countLinks <= maxLinks) {
-			System.out.println("Links = " + countLinks + " Depth = " + countDepth);
+		countDepth++;
+		if(countLinks <= maxLinks) {
 			scrapePage(currentPageURL, currentBase);
-			countDepth++;
 		} else {
 			return;
 		}
@@ -99,8 +100,7 @@ public class WebCrawler implements WebCrawlerInterface {
 				}
 				if (scrapedURL != null) {
 					if(countLinks <= maxLinks) {
-						boolean added = dm.writeURLtoTemp(countDepth, scrapedURL);
-						if (added) {
+						if (dm.writeURLtoTemp(countDepth, scrapedURL)) {
 							countLinks++;				
 						}
 					} else {
