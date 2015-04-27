@@ -23,8 +23,6 @@ public class WebCrawlerTest {
 	private static final String TEMP_FILE = "./Crawler/Data/crawltemp.txt";
 	private static final String ATTRIBUTES_FILE = "./Crawler/Data/crawlattributes.txt";
 	
-	
-	
 	@BeforeClass
 	public static void doOnceAtStartOfTests() {
 		File f = new File("./Crawler/TestHtml");
@@ -138,14 +136,14 @@ public class WebCrawlerTest {
 		WebCrawler wc = new WebCrawler();
 		thrown.expect(NullPointerException.class);
 		thrown.expectMessage("URL may not be null");
-		wc.crawl(null);
+		wc.crawl(null, "crawlsearchresults.txt");
 	}
 	
 	//come back to this when set up wider sequence
 	@ Ignore @Test
 	public void testStartingURLValidButDoesNotExist() {
 		WebCrawler wc = new WebCrawler();
-		wc.crawl(helpMakeURL("http://www.dcs.bbk.ac.uk/monkeys.html"));
+		wc.crawl(helpMakeURL("http://www.dcs.bbk.ac.uk/monkeys.html"), "crawlsearchresults.txt");
 	}
 	
 	//tests on cleaning startingURL so saves clean for checking of duplicates
@@ -153,7 +151,7 @@ public class WebCrawlerTest {
 	@Test
 	public void testNormaliseStartingURL() {
 		WebCrawler wc = new WebCrawler();
-		wc.crawl(helpMakeURL("http://www.dcs.bbk.ac.uk//about"));
+		wc.crawl(helpMakeURL("http://www.dcs.bbk.ac.uk//about"), "crawlsearchresults.txt");
 		String actual = helpReadAttributesFileLine(2);
 		String expected = "STARTING URL = http://www.dcs.bbk.ac.uk/about";
 		assertEquals(expected, actual);		
@@ -165,7 +163,7 @@ public class WebCrawlerTest {
 	@Test
 	public void testNormaliseStartingURLjustHost() {
 		WebCrawler wc = new WebCrawler();
-		wc.crawl(helpMakeURL("http://www.dcs.bbk.ac.uk"));
+		wc.crawl(helpMakeURL("http://www.dcs.bbk.ac.uk"), "crawlsearchresults.txt");
 		String actual = helpReadAttributesFileLine(2);
 		String expected = "STARTING URL = http://www.dcs.bbk.ac.uk";
 		assertEquals(expected, actual);		
@@ -177,7 +175,7 @@ public class WebCrawlerTest {
 	@Test
 	public void testNormaliseStartingURLjustHostwithForwardSlashAtEnd() {
 		WebCrawler wc = new WebCrawler();
-		wc.crawl(helpMakeURL("http://www.dcs.bbk.ac.uk/"));
+		wc.crawl(helpMakeURL("http://www.dcs.bbk.ac.uk/"), "crawlsearchresults.txt");
 		String actual = helpReadAttributesFileLine(2);
 		String expected = "STARTING URL = http://www.dcs.bbk.ac.uk/";
 		assertEquals(expected, actual);		
@@ -189,7 +187,7 @@ public class WebCrawlerTest {
 	@Test
 	public void testMakeComplexStatingURLsaveClean() {
 		WebCrawler wc = new WebCrawler();
-		wc.crawl(helpMakeURL("http://www.dcs.bbk.ac.uk/seminars/../about/"));
+		wc.crawl(helpMakeURL("http://www.dcs.bbk.ac.uk/seminars/../about/"), "crawlsearchresults.txt");
 		String actual = helpReadAttributesFileLine(2);
 		String expected = "STARTING URL = http://www.dcs.bbk.ac.uk/about/";
 		assertEquals(expected, actual);		
@@ -201,7 +199,7 @@ public class WebCrawlerTest {
 	@Test
 	public void testNormaliseStartingURLwithFileNameAtEndOfURL() {
 		WebCrawler wc = new WebCrawler();
-		wc.crawl(helpMakeURL("http://www.dcs.bbk.ac.uk//about/map.php"));
+		wc.crawl(helpMakeURL("http://www.dcs.bbk.ac.uk//about/map.php"), "crawlsearchresults.txt");
 		String actual = helpReadAttributesFileLine(2);
 		String expected = "STARTING URL = http://www.dcs.bbk.ac.uk/about/map.php";
 		assertEquals(expected, actual);		
@@ -213,7 +211,7 @@ public class WebCrawlerTest {
 	@Test
 	public void testMakeComplexStatingURLsaveCleanwithFileNameAtEndOfURL() {
 		WebCrawler wc = new WebCrawler();
-		wc.crawl(helpMakeURL("http://www.dcs.bbk.ac.uk/seminars/../about/map.php"));
+		wc.crawl(helpMakeURL("http://www.dcs.bbk.ac.uk/seminars/../about/map.php"), "crawlsearchresults.txt");
 		String actual = helpReadAttributesFileLine(2);
 		String expected = "STARTING URL = http://www.dcs.bbk.ac.uk/about/map.php";
 		assertEquals(expected, actual);		
@@ -227,7 +225,7 @@ public class WebCrawlerTest {
 	@Test
 	public void testCreatingBaseUrlFromStartingUrl() {
 		WebCrawler wc = new WebCrawler();
-		wc.crawl(helpMakeURL("http://www.dcs.bbk.ac.uk/"));
+		wc.crawl(helpMakeURL("http://www.dcs.bbk.ac.uk/"), "crawlsearchresults.txt");
 		String actual = helpReadAttributesFileLine(3);
 		String expected = "START BASE = http://www.dcs.bbk.ac.uk/";
 		assertEquals(expected, actual);
@@ -236,7 +234,7 @@ public class WebCrawlerTest {
 	@Test
 	public void testCreatingBaseUrlFromStartingUrlNoFinalFowardSlash() {
 		WebCrawler wc = new WebCrawler();
-		wc.crawl(helpMakeURL("http://www.dcs.bbk.ac.uk"));
+		wc.crawl(helpMakeURL("http://www.dcs.bbk.ac.uk"), "crawlsearchresults.txt");
 		String actual = helpReadAttributesFileLine(3);
 		String expected = "START BASE = http://www.dcs.bbk.ac.uk/";
 		assertEquals(expected, actual);
@@ -245,7 +243,7 @@ public class WebCrawlerTest {
 	@Test
 	public void testDiffStartingURL() {
 		WebCrawler wc = new WebCrawler();
-		wc.crawl(helpMakeURL("http://www.bbc.co.uk/"));
+		wc.crawl(helpMakeURL("http://www.bbc.co.uk/"), "crawlsearchresults.txt");
 		String actual = helpReadAttributesFileLine(3);
 		String expected = "START BASE = http://www.bbc.co.uk/";
 		assertEquals(expected, actual);
@@ -255,7 +253,7 @@ public class WebCrawlerTest {
 	@Test
 	public void testCreatingBaseUrlFromStartingUrlWithIndex() {
 		WebCrawler wc = new WebCrawler();
-		wc.crawl(helpMakeURL("http://www.dcs.bbk.ac.uk/index.php"));
+		wc.crawl(helpMakeURL("http://www.dcs.bbk.ac.uk/index.php"), "crawlsearchresults.txt");
 		String actual = helpReadAttributesFileLine(3);
 		String expected = "START BASE = http://www.dcs.bbk.ac.uk/";
 		assertEquals(expected, actual);
@@ -264,7 +262,7 @@ public class WebCrawlerTest {
 	@Test
 	public void testCreatingBaseUrlFromMoreComplexStartingUrl() {
 		WebCrawler wc = new WebCrawler();
-		wc.crawl(helpMakeURL("http://www.dcs.bbk.ac.uk/seminars/"));
+		wc.crawl(helpMakeURL("http://www.dcs.bbk.ac.uk/seminars/"), "crawlsearchresults.txt");
 		String actual = helpReadAttributesFileLine(3);
 		String expected = "START BASE = http://www.dcs.bbk.ac.uk/seminars/";
 		assertEquals(expected, actual);
@@ -273,7 +271,7 @@ public class WebCrawlerTest {
 	@Test
 	public void testCreatingBaseUrlFromMoreComplexStartingUrlNoFinalFowardSlash() {
 		WebCrawler wc = new WebCrawler();
-		wc.crawl(helpMakeURL("http://www.dcs.bbk.ac.uk/seminars"));
+		wc.crawl(helpMakeURL("http://www.dcs.bbk.ac.uk/seminars"), "crawlsearchresults.txt");
 		String actual = helpReadAttributesFileLine(3);
 		String expected = "START BASE = http://www.dcs.bbk.ac.uk/seminars/";
 		assertEquals(expected, actual);
@@ -282,7 +280,7 @@ public class WebCrawlerTest {
 	@Test
 	public void testCreatingBaseUrlFromMoreComplexStartingUrlWithIndex() {
 		WebCrawler wc = new WebCrawler();
-		wc.crawl(helpMakeURL("http://www.dcs.bbk.ac.uk/seminars/index-external.php"));
+		wc.crawl(helpMakeURL("http://www.dcs.bbk.ac.uk/seminars/index-external.php"), "crawlsearchresults.txt");
 		String actual = helpReadAttributesFileLine(3);
 		String expected = "START BASE = http://www.dcs.bbk.ac.uk/seminars/";
 		assertEquals(expected, actual);
@@ -291,7 +289,7 @@ public class WebCrawlerTest {
 	@Test
 	public void testCreatingBaseUrlFromStartingUrlWithValidDotsInPlaceOtherThanFinalFileName() {
 		WebCrawler wc = new WebCrawler();
-		wc.crawl(helpMakeURL("http://www.dcs.bbk.ac.uk/seminars/../about/map.php"));
+		wc.crawl(helpMakeURL("http://www.dcs.bbk.ac.uk/seminars/../about/map.php"), "crawlsearchresults.txt");
 		String actual = helpReadAttributesFileLine(3);
 		String expected = "START BASE = http://www.dcs.bbk.ac.uk/about/";
 		assertEquals(expected, actual);
@@ -300,7 +298,7 @@ public class WebCrawlerTest {
 	@Test
 	public void testCreatingBaseUrlFromStartingUrlWithValidDotsInPlaceAndNoFinalFileName() {
 		WebCrawler wc = new WebCrawler();
-		wc.crawl(helpMakeURL("http://www.dcs.bbk.ac.uk/seminars/../about/"));
+		wc.crawl(helpMakeURL("http://www.dcs.bbk.ac.uk/seminars/../about/"), "crawlsearchresults.txt");
 		String actual = helpReadAttributesFileLine(3);
 		String expected = "START BASE = http://www.dcs.bbk.ac.uk/about/";
 		assertEquals(expected, actual);
@@ -309,7 +307,7 @@ public class WebCrawlerTest {
 	@Test
 	public void testCreatingBaseUrlFromStartingUrlWithValidDotsInPlaceAndNoFinalFileNameNoFinalSlash() {
 		WebCrawler wc = new WebCrawler();
-		wc.crawl(helpMakeURL("http://www.dcs.bbk.ac.uk/seminars/../about"));
+		wc.crawl(helpMakeURL("http://www.dcs.bbk.ac.uk/seminars/../about"), "crawlsearchresults.txt");
 		String actual = helpReadAttributesFileLine(3);
 		String expected = "START BASE = http://www.dcs.bbk.ac.uk/about/";
 		assertEquals(expected, actual);
@@ -318,7 +316,7 @@ public class WebCrawlerTest {
 	@Test
 	public void testLongerURLBothStartingAndGettingBase() {
 		WebCrawler wc = new WebCrawler();
-		wc.crawl(helpMakeURL("http://www.dcs.bbk.ac.uk/courses/msccs/entry.php"));
+		wc.crawl(helpMakeURL("http://www.dcs.bbk.ac.uk/courses/msccs/entry.php"), "crawlsearchresults.txt");
 		String actual = helpReadAttributesFileLine(2);
 		String expected = "STARTING URL = http://www.dcs.bbk.ac.uk/courses/msccs/entry.php";
 		assertEquals(expected, actual);
@@ -332,7 +330,7 @@ public class WebCrawlerTest {
 	@Test
 	public void testRemoveReferenceFromURLnoPathOnlyHost() {
 		WebCrawler wc = new WebCrawler();
-		wc.crawl(helpMakeURL("http://www.dcs.bbk.ac.uk/#content"));
+		wc.crawl(helpMakeURL("http://www.dcs.bbk.ac.uk/#content"), "crawlsearchresults.txt");
 		String actual = helpReadAttributesFileLine(2);
 		String expected = "STARTING URL = http://www.dcs.bbk.ac.uk/";
 		assertEquals(expected, actual);
@@ -344,7 +342,7 @@ public class WebCrawlerTest {
 	@Test
 	public void testRemoveReferenceFromURLwithHostAndPatht() {
 		WebCrawler wc = new WebCrawler();
-		wc.crawl(helpMakeURL("http://www.dcs.bbk.ac.uk/news/index.php#n708"));
+		wc.crawl(helpMakeURL("http://www.dcs.bbk.ac.uk/news/index.php#n708"), "crawlsearchresults.txt");
 		String actual = helpReadAttributesFileLine(2);
 		String expected = "STARTING URL = http://www.dcs.bbk.ac.uk/news/index.php";
 		assertEquals(expected, actual);
@@ -358,7 +356,7 @@ public class WebCrawlerTest {
 	@Test
 	public void testDealWithQueryPartOfURLexampleOne() {
 		WebCrawler wc = new WebCrawler();
-		wc.crawl(helpMakeURL("https://www.dcs.bbk.ac.uk/courses/bbkquality.php?from=pgcourses"));
+		wc.crawl(helpMakeURL("https://www.dcs.bbk.ac.uk/courses/bbkquality.php?from=pgcourses"), "crawlsearchresults.txt");
 		String actual = helpReadAttributesFileLine(2);
 		String expected = "STARTING URL = https://www.dcs.bbk.ac.uk/courses/bbkquality.php?from=pgcourses";
 		assertEquals(expected, actual);
@@ -370,7 +368,7 @@ public class WebCrawlerTest {
 	@Test
 	public void testDealWithQueryPartOfURLexampleThree() {
 		WebCrawler wc = new WebCrawler();
-		wc.crawl(helpMakeURL("http://jobs.bbk.ac.uk/fe/tpl_birkbeckcollege01.asp?s=4A515F4E5A565B1A&jobid=55240,0202886098&key=85175678&c=606965128771&pagestamp=sedzccxubhnvbfauxj"));
+		wc.crawl(helpMakeURL("http://jobs.bbk.ac.uk/fe/tpl_birkbeckcollege01.asp?s=4A515F4E5A565B1A&jobid=55240,0202886098&key=85175678&c=606965128771&pagestamp=sedzccxubhnvbfauxj"), "crawlsearchresults.txt");
 		String actual = helpReadAttributesFileLine(2);
 		String expected = "STARTING URL = http://jobs.bbk.ac.uk/fe/tpl_birkbeckcollege01.asp?s=4A515F4E5A565B1A&jobid=55240,0202886098&key=85175678&c=606965128771&pagestamp=sedzccxubhnvbfauxj";
 		assertEquals(expected, actual);
@@ -385,7 +383,7 @@ public class WebCrawlerTest {
 	public void testScrapeFirstURLfromFile() {
 		WebCrawler wc = new WebCrawler();
 		helpMakeHTMLTestFile("", "<a href=\"https://www.dcs.bbk.ac.uk/courses\">Find Me</a>");
-		wc.crawl(helpMakeURL("file:./Crawler/TestHtml/test.html"));
+		wc.crawl(helpMakeURL("file:./Crawler/TestHtml/test.html"), "crawlsearchresults.txt");
 		String actual = helpReadTempFileLine(3);
 		String expected = "0,\"https://www.dcs.bbk.ac.uk/courses\"";
 		assertEquals(expected, actual);
@@ -395,7 +393,7 @@ public class WebCrawlerTest {
 	public void testScrapeFirstBasePlusURLfromFile() {
 		WebCrawler wc = new WebCrawler();
 		helpMakeHTMLTestFile("<base href=\"https://www.dcs.bbk.ac.uk\">", "<a href=\"courses\">Find Me</a>");
-		wc.crawl(helpMakeURL("file:./Crawler/TestHtml/test.html"));
+		wc.crawl(helpMakeURL("file:./Crawler/TestHtml/test.html"), "crawlsearchresults.txt");
 		String actual = helpReadTempFileLine(3);
 		String expected = "0,\"https://www.dcs.bbk.ac.uk/courses\"";
 		assertEquals(expected, actual);
@@ -404,7 +402,7 @@ public class WebCrawlerTest {
 	@Test
 	public void testFullTestHTMLfileWhereWeFindBase() {
 		WebCrawler wc = new WebCrawler();
-		wc.crawl(helpMakeURL("file:./Crawler/TestHtml/UseBaseCorrect.html"));
+		wc.crawl(helpMakeURL("file:./Crawler/TestHtml/UseBaseCorrect.html"), "crawlsearchresults.txt");
 		String actual = helpReadTempFileLine(3);
 		String expected = "0,\"file:Example/axe.html\"";
 		assertEquals(expected, actual);
@@ -417,7 +415,7 @@ public class WebCrawlerTest {
 	public void testScrapeFirstBaseWithCapsONE() {
 		WebCrawler wc = new WebCrawler();
 		helpMakeHTMLTestFile("<BASE href=\"https://www.dcs.bbk.ac.uk\">", "<a href=\"courses\">Find Me</a>");
-		wc.crawl(helpMakeURL("file:./Crawler/TestHtml/test.html"));
+		wc.crawl(helpMakeURL("file:./Crawler/TestHtml/test.html"), "crawlsearchresults.txt");
 		String actual = helpReadTempFileLine(3);
 		String expected = "0,\"https://www.dcs.bbk.ac.uk/courses\"";
 		assertEquals(expected, actual);
@@ -427,7 +425,7 @@ public class WebCrawlerTest {
 	public void testScrapeFirstBaseWithCapsTWO() {
 		WebCrawler wc = new WebCrawler();
 		helpMakeHTMLTestFile("<bAsE href=\"https://www.dcs.bbk.ac.uk\">", "<a href=\"courses\">Find Me</a>");
-		wc.crawl(helpMakeURL("file:./Crawler/TestHtml/test.html"));
+		wc.crawl(helpMakeURL("file:./Crawler/TestHtml/test.html"), "crawlsearchresults.txt");
 		String actual = helpReadTempFileLine(3);
 		String expected = "0,\"https://www.dcs.bbk.ac.uk/courses\"";
 		assertEquals(expected, actual);
@@ -437,7 +435,7 @@ public class WebCrawlerTest {
 	public void testScrapeFirstBaseWithSpacesONE() {
 		WebCrawler wc = new WebCrawler();
 		helpMakeHTMLTestFile("<  BASE href=\"https://www.dcs.bbk.ac.uk\">", "<a href=\"courses\">Find Me</a>");
-		wc.crawl(helpMakeURL("file:./Crawler/TestHtml/test.html"));
+		wc.crawl(helpMakeURL("file:./Crawler/TestHtml/test.html"), "crawlsearchresults.txt");
 		String actual = helpReadTempFileLine(3);
 		String expected = "0,\"https://www.dcs.bbk.ac.uk/courses\"";
 		assertEquals(expected, actual);
@@ -447,7 +445,7 @@ public class WebCrawlerTest {
 	public void testScrapeFirstBaseWithSpacesTWO() {
 		WebCrawler wc = new WebCrawler();
 		helpMakeHTMLTestFile("<  B A S E   h  r  e  f  =   \"https://www.dcs.bbk.ac.uk\">", "<a href=\"courses\">Find Me</a>");
-		wc.crawl(helpMakeURL("file:./Crawler/TestHtml/test.html"));
+		wc.crawl(helpMakeURL("file:./Crawler/TestHtml/test.html"), "crawlsearchresults.txt");
 		String actual = helpReadTempFileLine(3);
 		String expected = "0,\"https://www.dcs.bbk.ac.uk/courses\"";
 		assertEquals(expected, actual);
@@ -457,7 +455,7 @@ public class WebCrawlerTest {
 	public void testScrapeFirstLinkWithCapsONE() {
 		WebCrawler wc = new WebCrawler();
 		helpMakeHTMLTestFile("<base href=\"https://www.dcs.bbk.ac.uk\">", "<A href=\"courses\">Find Me</a>");
-		wc.crawl(helpMakeURL("file:./Crawler/TestHtml/test.html"));
+		wc.crawl(helpMakeURL("file:./Crawler/TestHtml/test.html"), "crawlsearchresults.txt");
 		String actual = helpReadTempFileLine(3);
 		String expected = "0,\"https://www.dcs.bbk.ac.uk/courses\"";
 		assertEquals(expected, actual);
@@ -467,7 +465,7 @@ public class WebCrawlerTest {
 	public void testScrapeFirstLinkWithCapsTWO() {
 		WebCrawler wc = new WebCrawler();
 		helpMakeHTMLTestFile("<base href=\"https://www.dcs.bbk.ac.uk\">", "<A hreF=\"courses\">Find Me</a>");
-		wc.crawl(helpMakeURL("file:./Crawler/TestHtml/test.html"));
+		wc.crawl(helpMakeURL("file:./Crawler/TestHtml/test.html"), "crawlsearchresults.txt");
 		String actual = helpReadTempFileLine(3);
 		String expected = "0,\"https://www.dcs.bbk.ac.uk/courses\"";
 		assertEquals(expected, actual);
@@ -477,7 +475,7 @@ public class WebCrawlerTest {
 	public void testScrapeFirstLinkWithSpacesONE() {
 		WebCrawler wc = new WebCrawler();
 		helpMakeHTMLTestFile("<base href=\"https://www.dcs.bbk.ac.uk\">", "< a href=\"courses\">Find Me</a>");
-		wc.crawl(helpMakeURL("file:./Crawler/TestHtml/test.html"));
+		wc.crawl(helpMakeURL("file:./Crawler/TestHtml/test.html"), "crawlsearchresults.txt");
 		String actual = helpReadTempFileLine(3);
 		String expected = "0,\"https://www.dcs.bbk.ac.uk/courses\"";
 		assertEquals(expected, actual);
@@ -487,7 +485,7 @@ public class WebCrawlerTest {
 	public void testScrapeFirstLinkWithSpacesTWO() {
 		WebCrawler wc = new WebCrawler();
 		helpMakeHTMLTestFile("<base href=\"https://www.dcs.bbk.ac.uk\">", "< a href= \"courses\">Find Me</a>");
-		wc.crawl(helpMakeURL("file:./Crawler/TestHtml/test.html"));
+		wc.crawl(helpMakeURL("file:./Crawler/TestHtml/test.html"), "crawlsearchresults.txt");
 		String actual = helpReadTempFileLine(3);
 		String expected = "0,\"https://www.dcs.bbk.ac.uk/courses\"";
 		assertEquals(expected, actual);
@@ -496,7 +494,7 @@ public class WebCrawlerTest {
 	@Test
 	public void testFullTestHTMLfileProblemFormatsThatHasTrickyFormatsOfLinks() {
 		WebCrawler wc = new WebCrawler();
-		wc.crawl(helpMakeURL("file:./Crawler/TestHtml/ProblemFormats.html"));
+		wc.crawl(helpMakeURL("file:./Crawler/TestHtml/ProblemFormats.html"), "crawlsearchresults.txt");
 		String actual = helpReadTempFileLine(3);
 		String expected = "0,\"file:./Crawler/TestHtml/axe.html\"";
 		assertEquals(expected, actual);
@@ -535,7 +533,7 @@ public class WebCrawlerTest {
 	@Test
 	public void testFullTestHTMLfileProblemFormatsThatLinksSplitOverLines() {
 		WebCrawler wc = new WebCrawler();
-		wc.crawl(helpMakeURL("file:./Crawler/TestHtml/ProblemFormatsTWO.html"));
+		wc.crawl(helpMakeURL("file:./Crawler/TestHtml/ProblemFormatsTWO.html"), "crawlsearchresults.txt");
 		String actual = helpReadTempFileLine(3);
 		String expected = "0,\"file:./Crawler/TestHtml/axe.html\"";
 		assertEquals(expected, actual);
@@ -578,7 +576,7 @@ public class WebCrawlerTest {
 	public void testScrapeBasePlusRelativeURLThatIsEmptyStringfromFile() {
 		WebCrawler wc = new WebCrawler();
 		helpMakeHTMLTestFile("<base href=\"https://www.dcs.bbk.ac.uk/courses\">", "<a href=\"\">Find Me</a>");
-		wc.crawl(helpMakeURL("file:./Crawler/TestHtml/test.html"));
+		wc.crawl(helpMakeURL("file:./Crawler/TestHtml/test.html"), "crawlsearchresults.txt");
 		String actual = helpReadTempFileLine(3);
 		String expected = "0,\"https://www.dcs.bbk.ac.uk/courses\"";
 		assertEquals(expected, actual);
@@ -588,7 +586,7 @@ public class WebCrawlerTest {
 	public void testScrapeURLThatHostPlusStraightToQuestionMarkStuffNoFile() {
 		WebCrawler wc = new WebCrawler();
 		helpMakeHTMLTestFile("", "<a href=\"http://libeproject.it?lang=en%2F%3Flang%3Den&#038;paged=2\">Find Me</a>");
-		wc.crawl(helpMakeURL("file:./Crawler/TestHtml/test.html"));
+		wc.crawl(helpMakeURL("file:./Crawler/TestHtml/test.html"), "crawlsearchresults.txt");
 		String actual = helpReadTempFileLine(3);
 		String expected = "0,\"http://libeproject.it?lang=en%2F%3Flang%3Den&\"";
 		assertEquals(expected, actual);
@@ -598,7 +596,7 @@ public class WebCrawlerTest {
 	public void testDealWithURLWithSpacesFromFile() {
 		WebCrawler wc = new WebCrawler();
 		helpMakeHTMLTestFile("", "<a href=\"http://www.dcs.bbk.ac.uk/courses/bsccomp/bsc-comp-part-time-booklet 2013-14.pdf\">Find Me</a>");
-		wc.crawl(helpMakeURL("file:./Crawler/TestHtml/test.html"));
+		wc.crawl(helpMakeURL("file:./Crawler/TestHtml/test.html"), "crawlsearchresults.txt");
 		String actual = helpReadTempFileLine(3);
 		String expected = "0,\"http://www.dcs.bbk.ac.uk/courses/bsccomp/bsc-comp-part-time-booklet%202013-14.pdf\"";
 		assertEquals(expected, actual);
@@ -608,7 +606,7 @@ public class WebCrawlerTest {
 	public void testDealWithURLWithNumbersInIt() {
 		WebCrawler wc = new WebCrawler();
 		helpMakeHTMLTestFile("", "<a href=\"http://italk2learn.eu\">Find Me</a>");
-		wc.crawl(helpMakeURL("file:./Crawler/TestHtml/test.html"));
+		wc.crawl(helpMakeURL("file:./Crawler/TestHtml/test.html"), "crawlsearchresults.txt");
 		String actual = helpReadTempFileLine(3);
 		String expected = "0,\"http://italk2learn.eu\"";
 		assertEquals(expected, actual);
@@ -619,7 +617,7 @@ public class WebCrawlerTest {
 	public void testDealWithURLWithFileNameWithNoDotONE() {
 		WebCrawler wc = new WebCrawler();
 		helpMakeHTMLTestFile("", "<a href=\"http://www.springer.com/engineering/journal/12530\">Find Me</a>");
-		wc.crawl(helpMakeURL("file:./Crawler/TestHtml/test.html"));
+		wc.crawl(helpMakeURL("file:./Crawler/TestHtml/test.html"), "crawlsearchresults.txt");
 		String actual = helpReadTempFileLine(3);
 		String expected = "0,\"http://www.springer.com/engineering/journal/12530\"";
 		assertEquals(expected, actual);
@@ -629,7 +627,7 @@ public class WebCrawlerTest {
 	public void testDealWithURLWithFileNameWithNoDotTWO() {
 		WebCrawler wc = new WebCrawler();
 		helpMakeHTMLTestFile("", "<a href=\"http://www.bbk.ac.uk/news/web-pioneer-gives-2015-andrew-booth-memorial-lecture-at-birkbeck-1\">Find Me</a>");
-		wc.crawl(helpMakeURL("file:./Crawler/TestHtml/test.html"));
+		wc.crawl(helpMakeURL("file:./Crawler/TestHtml/test.html"), "crawlsearchresults.txt");
 		String actual = helpReadTempFileLine(3);
 		String expected = "0,\"http://www.bbk.ac.uk/news/web-pioneer-gives-2015-andrew-booth-memorial-lecture-at-birkbeck-1\"";
 		assertEquals(expected, actual);
@@ -638,7 +636,7 @@ public class WebCrawlerTest {
 	@Test
 	public void testFullTestHTMLfileBeastsThatWeScrapeFilesInCorrectOrder() {
 		WebCrawler wc = new WebCrawler();
-		wc.crawl(helpMakeURL("file:./Crawler/TestHtml/beasts.html"));
+		wc.crawl(helpMakeURL("file:./Crawler/TestHtml/beasts.html"), "crawlsearchresults.txt");
 		String actual = helpReadTempFileLine(3);
 		String expected = "0,\"file:./Crawler/TestHtml/ant.html\"";
 		assertEquals(expected, actual);
@@ -662,12 +660,12 @@ public class WebCrawlerTest {
 	@Test
 	public void testProgrammerSetsMaxLinksAndMaxDepthLinksLimitFourReachedFirst() {
 		WebCrawler wc = new WebCrawler(4,500);
-		wc.crawl(helpMakeURL("file:./Crawler/TestHtml/beasts.html"));
+		wc.crawl(helpMakeURL("file:./Crawler/TestHtml/beasts.html"), "crawlsearchresults.txt");
 		String actual = helpReadTempFileLine(3);
 		String expected = "0,\"file:./Crawler/TestHtml/ant.html\"";
 		assertEquals(expected, actual);
 		actual = helpReadTempFileLine(4);
-		expected = "0,\"file:./Crawler/TestHtml/bear.html\"";
+		expected = "1,\"file:./Crawler/TestHtml/bear.html\"";
 		assertEquals(expected, actual);
 		actual = helpReadTempFileLine(5);
 		expected = "2,\"file:./Crawler/TestHtml/antsmall.html\"";
@@ -682,9 +680,9 @@ public class WebCrawlerTest {
 	@Test
 	public void testProgrammerSetsMaxLinksAndMaxDepthLinksLimitOneReachedFirst() {
 		WebCrawler wc = new WebCrawler(1,500);
-		wc.crawl(helpMakeURL("file:./Crawler/TestHtml/beasts.html"));
+		wc.crawl(helpMakeURL("file:./Crawler/TestHtml/beasts.html"), "crawlsearchresults.txt");
 		String actual = helpReadTempFileLine(3);
-		String expected = "0,\"file:./Crawler/TestHtml/ant.html\"";
+		String expected = "1,\"file:./Crawler/TestHtml/ant.html\"";
 		assertEquals(expected, actual);
 		actual = helpReadTempFileLine(4);
 		assertNull(actual);
@@ -693,7 +691,7 @@ public class WebCrawlerTest {
 	@Test
 	public void testProgrammerSetsMaxLinksAndMaxDepthLinksLimitZeroReachedFirst() {
 		WebCrawler wc = new WebCrawler(0,500);
-		wc.crawl(helpMakeURL("file:./Crawler/TestHtml/beasts.html"));
+		wc.crawl(helpMakeURL("file:./Crawler/TestHtml/beasts.html"), "crawlsearchresults.txt");
 		String actual = helpReadTempFileLine(3);
 		actual = helpReadTempFileLine(4);
 		assertNull(actual);
@@ -704,14 +702,14 @@ public class WebCrawlerTest {
 		thrown.expect(IllegalArgumentException.class);
 		thrown.expectMessage("Argument must be positive");
 		WebCrawler wc = new WebCrawler(-1,500);
-		wc.crawl(helpMakeURL("file:./Crawler/TestHtml/beasts.html"));
+		wc.crawl(helpMakeURL("file:./Crawler/TestHtml/beasts.html"), "crawlsearchresults.txt");
 	}
 
 
 	@Test
 	public void testProgrammerSetsMaxLinksAndMaxDepthDepthLimitThreeReachedFirst() {
 		WebCrawler wc = new WebCrawler(500,3);
-		wc.crawl(helpMakeURL("file:./Crawler/TestHtml/beasts.html"));
+		wc.crawl(helpMakeURL("file:./Crawler/TestHtml/beasts.html"), "crawlsearchresults.txt");
 		String actual = helpReadTempFileLine(3);
 		String expected = "0,\"file:./Crawler/TestHtml/ant.html\"";
 		assertEquals(expected, actual);
@@ -743,7 +741,7 @@ public class WebCrawlerTest {
 	@Test
 	public void testProgrammerSetsMaxLinksAndMaxDepthDepthLimitOneReachedFirst() {
 		WebCrawler wc = new WebCrawler(500,1);
-		wc.crawl(helpMakeURL("file:./Crawler/TestHtml/beasts.html"));
+		wc.crawl(helpMakeURL("file:./Crawler/TestHtml/beasts.html"), "crawlsearchresults.txt");
 		String actual = helpReadTempFileLine(3);
 		String expected = "0,\"file:./Crawler/TestHtml/ant.html\"";
 		assertEquals(expected, actual);
@@ -769,7 +767,7 @@ public class WebCrawlerTest {
 	@Test
 	public void testProgrammerSetsMaxLinksAndMaxDepthDepthLimitZeroReachedFirst() {
 		WebCrawler wc = new WebCrawler(500,0);
-		wc.crawl(helpMakeURL("file:./Crawler/TestHtml/beasts.html"));
+		wc.crawl(helpMakeURL("file:./Crawler/TestHtml/beasts.html"), "crawlsearchresults.txt");
 		String actual = helpReadTempFileLine(3);
 		String expected = "1,\"file:./Crawler/TestHtml/ant.html\"";
 		assertEquals(expected, actual);
@@ -779,8 +777,4 @@ public class WebCrawlerTest {
 		actual = helpReadTempFileLine(5);
 		assertNull(actual);
 	}
-	
-
-
-
 }

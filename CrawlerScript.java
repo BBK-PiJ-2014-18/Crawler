@@ -26,7 +26,7 @@ public class CrawlerScript {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		wc.crawl(bbcURL);
+		wc.crawl(bbcURL, "crawlsearchresults");
 		WebCrawlerInterface fpwc = new FutureProgrammersWebCrawler();
 		URL bbkURL = null;
 		try {
@@ -35,7 +35,7 @@ public class CrawlerScript {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		fpwc.crawl(bbkURL);
+		fpwc.crawl(bbkURL, "crawlsearchresults");
 	}
 	
 	

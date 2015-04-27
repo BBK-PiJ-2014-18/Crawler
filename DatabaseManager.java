@@ -16,15 +16,17 @@ public class DatabaseManager {
 	
 	private static final String TEMP_FILE = "./Crawler/Data/crawltemp.txt";
 	private static final String ATTRIBUTES_FILE = "./Crawler/Data/crawlattributes.txt";
-
+	private static final String SEARCH_RESULT_DIRECTORY = "./Crawler/Data/";
 	
-	public DatabaseManager() {
-		setUpDataFiles();
+	public DatabaseManager(String outputFileName) {
+		setUpDataFiles(outputFileName);
 	}
 	
-	private void setUpDataFiles() {
+	private void setUpDataFiles(String outputFileName) {
 		makeDirectory("./Crawler/Data");
 		deleteFileIfExists(TEMP_FILE);
+		deleteFileIfExists(SEARCH_RESULT_DIRECTORY + outputFileName);
+		//delete others?
 	}
 	
 	private void deleteFileIfExists(String fileToDelete) {
@@ -32,7 +34,6 @@ public class DatabaseManager {
 		try {
 			Files.deleteIfExists(p);
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}		
 	}
@@ -42,7 +43,6 @@ public class DatabaseManager {
 		f.mkdir();
 	}
 	
-	// or return boolean?
 	public void saveCrawlAttributes (URL startingURL, URL base) {
 		PrintWriter out = null;
 		File file = new File(ATTRIBUTES_FILE);
@@ -77,9 +77,7 @@ public class DatabaseManager {
 		}
 	}
 	
-	
 	public boolean writeURLtoTemp(int priority, URL urlToWrite) {
-		
 		//check if urlToWrite is already in file
 		File file = new File(TEMP_FILE);
 		BufferedReader in = null;
@@ -118,6 +116,23 @@ public class DatabaseManager {
 		}
 		return true;
 	}
+	
+	public void writeToSearchResultsFile(URL urlToWrite, String outputFileName) {
+		PrintWriter out = null;
+		File file = new File(SEARCH_RESULT_DIRECTORY + outputFileName);
+		try {
+			out = new PrintWriter(new BufferedWriter(new FileWriter(file,true)));
+			out.write(urlToWrite.toString() + "\n");
+		} catch (FileNotFoundException ex) {
+			System.out.println("Cannot write to file (not found) " + file + ".");
+		} catch (IOException e) {
+			System.out.println("Cannot write to file (IO exception) " + file + ".");
+			e.printStackTrace();
+		} finally {
+			out.close();
+		}	
+	}	
+	
 	
 	public URL getNextURL(int maxDepth) {
 		//return the lowest priority URL or null if none <= maxDepth or all are zero

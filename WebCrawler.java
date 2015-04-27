@@ -18,7 +18,6 @@ public class WebCrawler implements WebCrawlerInterface {
 	private Set<String> protocolsToIndex;
 	
 	public WebCrawler() {
-		this.dm = new DatabaseManager();
 		this.um = new URLmanipulator();
 		this.countLinks = 1;
 		this.countDepth = 0;
@@ -28,7 +27,6 @@ public class WebCrawler implements WebCrawlerInterface {
 	}
 
 	public WebCrawler(int maxLinks, int maxDepth) {
-		this.dm = new DatabaseManager();
 		this.um = new URLmanipulator();
 		this.countLinks = 1;
 		this.countDepth = 0;
@@ -48,7 +46,7 @@ public class WebCrawler implements WebCrawlerInterface {
 	}
 	
 	//crawl should have database information as an argument
-	public void crawl(URL currentPageURL)  {
+	public void crawl(URL currentPageURL, String outputFileName)  {
 		if(currentPageURL == null){
 			throw new NullPointerException("URL may not be null");
 		}
@@ -56,22 +54,27 @@ public class WebCrawler implements WebCrawlerInterface {
 		URL currentBase = um.makeBase(currentPageURL);
 		//only do this first time
 		if (countDepth == 0) {
+			dm = new DatabaseManager(outputFileName);
 			dm.saveCrawlAttributes(currentPageURL, currentBase);
 			dm.intitalizeTempFile(currentPageURL);
 		}
 		countDepth++;
-		if(countLinks <= maxLinks) {
+//		if(countLinks <= maxLinks) {
 			scrapePage(currentPageURL, currentBase);
+			if(search(currentPageURL)) {
+				dm.writeToSearchResultsFile(currentPageURL, outputFileName);	
+//			}
 		} else {
 			return;
 		}
-		search(currentPageURL);
-		URL nextURL = dm.getNextURL(maxDepth);
+		URL nextURL = null;	
+		if(countLinks < maxLinks) {
+			nextURL = dm.getNextURL(maxDepth);
+		}
 		if(nextURL != null) {
-			crawl(nextURL);
+			crawl(nextURL, outputFileName);
 		}
 		return;
-		
 	}
 	
 	private void scrapePage(URL pageToScrape, URL base) {
