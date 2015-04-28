@@ -5,8 +5,12 @@ import java.util.HashSet;
 import java.util.Set;
 
 /**
+ * An implementation of the WebCrawlerInterface, using the default search() method specified there.
+ * 
+ * WebCrawler depends on an HTMLreader (to parse HTML), a URLmanipulator (to help form vaild URLs) 
+ * and a DatabaseManager (to help read/write to relevant files).
+ * 
  * @author markkingsbury
- *
  */
 public class WebCrawler implements WebCrawlerInterface {
 	
@@ -22,7 +26,8 @@ public class WebCrawler implements WebCrawlerInterface {
 	private Set<String> protocolsToIndex;
 	
 	/**
-	 * 
+	 * Constructor that uses Default values to limit extent of crawl.
+	 * Sets protocols to be indexed.
 	 */
 	public WebCrawler() {
 		this.um = new URLmanipulator();
@@ -34,8 +39,10 @@ public class WebCrawler implements WebCrawlerInterface {
 	}
 
 	/**
-	 * @param maxLinks
-	 * @param maxDepth
+	 * Constructor that allows programmer to select values to limit extent of crawl.
+	 * Also sets up the protocols to be indexed.
+	 * @param maxLinks, the maximum number of links to be scraped for further URLs. 
+	 * @param maxDepth, is reached once all links found on pages up to that depth have been scrapped for further URLs.
 	 */
 	public WebCrawler(int maxLinks, int maxDepth) {
 		this.um = new URLmanipulator();
@@ -50,7 +57,7 @@ public class WebCrawler implements WebCrawlerInterface {
 	}
 	
 	/**
-	 * 
+	 * Establishes the protocols to be indexed.
 	 */
 	private void setProtocolsToIndex() {
 		this.protocolsToIndex = new HashSet<String>();
@@ -58,8 +65,7 @@ public class WebCrawler implements WebCrawlerInterface {
 		protocolsToIndex.add("https");
 		protocolsToIndex.add("file");		
 	}
-	
-	//crawl should have database information as an argument
+
 	public void crawl(URL currentPageURL, String outputFileName)  {
 		if(currentPageURL == null){
 			throw new NullPointerException("URL may not be null");
@@ -78,7 +84,6 @@ public class WebCrawler implements WebCrawlerInterface {
 			dm.writeToSearchResultsFile(currentPageURL, outputFileName);	
 		}
 		URL nextURL = null;	
-		
 		if(countLinks < maxLinks) {
 			nextURL = dm.getNextURL(maxDepth);
 			countLinks++;
@@ -86,12 +91,13 @@ public class WebCrawler implements WebCrawlerInterface {
 		if(nextURL != null) {
 			crawl(nextURL, outputFileName);
 		}
-	
 	}
 	
 	/**
-	 * @param pageToScrape
-	 * @param base
+	 * Manages the scraping of a page, finding the base is present & then scraping all URLs found on the page.  These URLs are put with 
+	 * their base (where relevant) & are then written to the temp data file. 
+	 * @param pageToScrape, the page to scrape
+	 * @param base, the base that goes with that the pageToScrape (although another base may be found on the actual page, and that one is used)
 	 */
 	private void scrapePage(URL pageToScrape, URL base) {
 		InputStream inputStream = null;
@@ -129,9 +135,10 @@ public class WebCrawler implements WebCrawlerInterface {
 	}
 	
 	/**
-	 * @param inputStream
-	 * @param checkFor
-	 * @return
+	 * Scrapes a page looking for string that identifies relevant HTML element, and writing the following URL to  
+	 * @param inputStream, the HTML to be read
+	 * @param checkFor, the string that identifies the relevant HTML element.
+	 * @return string representing the URL found. 
 	 */
 	private String findURL(InputStream inputStream, String checkFor) {
 		HTMLread hr = new HTMLread();
@@ -158,8 +165,9 @@ public class WebCrawler implements WebCrawlerInterface {
 	}
 	
 	/**
+	 * Checks that the candidateURL is of the protocol type we wish to scrape.
 	 * @param candidateURL
-	 * @return
+	 * @return the candidateURL if it is of the protocol type we wish to scrape, otherwise null. 
 	 */
 	private URL filterURL(URL candidateURL) {
 		String protocol = candidateURL.getProtocol();
@@ -170,7 +178,8 @@ public class WebCrawler implements WebCrawlerInterface {
 	}
 	
 	/**
-	 * @param inputStream
+	 * Helper method to close any input stream.
+	 * @param inputStream to be closed.
 	 */
 	private void closeInputStream(InputStream inputStream) {
 		if(inputStream != null) {

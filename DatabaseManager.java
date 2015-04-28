@@ -13,28 +13,27 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 
 /**
+ * An implementation of DatabaseManagerInterface that helps a WebCrawler read./write to files.
+ * 
  * @author markkingsbury
- *
  */
 public class DatabaseManager implements DatabaseManagerInterface {
 	
-	/**
-	 * 
-	 */
 	private static final String TEMP_FILE = "./Data/crawltemp.txt";
 	private static final String ATTRIBUTES_FILE = "./Data/crawlattributes.txt";
-
 	private static final String SEARCH_RESULT_DIRECTORY = "./Data/";
 	
 	/**
-	 * @param outputFileName
+	 * Constructor for a DatabaseManage that also helps us set up data files and paths.
+	 * @param outputFileName, the name of file for results from search() method
 	 */
 	public DatabaseManager(String outputFileName) {
 		setUpDataFiles(outputFileName);
 	}
 	
 	/**
-	 * @param outputFileName
+	 * Helps set up data files
+	 * @param outputFileName, the name of file for results from search() method
 	 */
 	private void setUpDataFiles(String outputFileName) {
 		makeDirectory("./Data");
@@ -43,7 +42,8 @@ public class DatabaseManager implements DatabaseManagerInterface {
 	}
 	
 	/**
-	 * @param fileToDelete
+	 * Helps delete a file
+	 * @param fileToDelete, the file to be delted
 	 */
 	private void deleteFileIfExists(String fileToDelete) {
 		Path p = Paths.get(fileToDelete);
@@ -55,7 +55,8 @@ public class DatabaseManager implements DatabaseManagerInterface {
 	}
  	
 	/**
-	 * @param dirName
+	 * Helps make a directory
+	 * @param dirName, the directory to be created
 	 */
 	private void makeDirectory(String dirName) {
 		File f = new File(dirName);
@@ -193,7 +194,8 @@ public class DatabaseManager implements DatabaseManagerInterface {
 	}
 	
 	/**
-	 * @param reader
+	 * Helps close a Reader
+	 * @param reader, the Reader to be closed
 	 */
 	private void closeReader(Reader reader) {
 		try {

@@ -21,7 +21,7 @@ public class URLmanipulator implements URLmanipulatorInterface {
 		String protocol = startingURL.getProtocol(); 	// e.g. "http"
 		String host = startingURL.getHost(); 			// e.g. "www.dcs.bbk.ac.uk"
 		String file = startingURL.getFile();			// e.g. "/seminars/index-external.php"
-		file = addFinalForwardSlash(file, startingURL);
+		file = addFinalForwardSlash(file);
 		//delete any file name from end of path
 		file = file.substring(0, file.lastIndexOf('/') + 1);
 		URL result = null;
@@ -35,11 +35,11 @@ public class URLmanipulator implements URLmanipulatorInterface {
 	}	
 
 	/**
-	 * @param file
-	 * @param diagURL
-	 * @return
+	 * Adds a final forward slash to the file element of a URL where needed to help create a valid base URL.
+	 * @param file, the file element of a URL
+	 * @return the file element that will be part of the base URL
 	 */
-	private String addFinalForwardSlash(String file, URL diagURL) {
+	private String addFinalForwardSlash(String file) {
 		//if there is no file (e.g file = "" so address is just host)
 		if(file == "") {
 			file = "/";
@@ -77,10 +77,11 @@ public class URLmanipulator implements URLmanipulatorInterface {
 		return result;
 	}
 	
-	//remove any  duplicate "/"s that have got in
+
 	/**
-	 * @param dirtyURL
-	 * @return
+	 * Part of the URL standardization behavior (deals with duplicate '/'s in URL)
+	 * @param dirtyURL, a URL that may contain duplicate '/'s
+	 * @return a normalized URL without duplicate '/'s
 	 */
 	private URL normalizeURL(URL dirtyURL) {
 		URL result = null;
@@ -89,7 +90,6 @@ public class URLmanipulator implements URLmanipulatorInterface {
 			URI temp = noSpacesURL.toURI();
 			temp = temp.normalize();
 			result = temp.toURL();
-			//what order should these catches be in??
 		} catch (URISyntaxException ex) {
 			writeToExceptionLog("URISyntaxException in normalizeURL(). Dirty URL:" + dirtyURL);		
 		} catch (MalformedURLException ex) {
@@ -99,8 +99,9 @@ public class URLmanipulator implements URLmanipulatorInterface {
 	}
 	
 	/**
-	 * @param dirtyURL
-	 * @return
+	 * Part of the URL standardization behavior (deals with spaces in URL)
+	 * @param dirtyURL, which may contain spaces
+	 * @return a URL with spaces replaced by %20
 	 */
 	private URL fixSpacesURL(URL dirtyURL) {
 		URL result = null;
