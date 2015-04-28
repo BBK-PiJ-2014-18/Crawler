@@ -3,6 +3,11 @@ import java.net.MalformedURLException;
 import java.net.URL;
 
 
+/**
+ * A script to demonstrate how WebCrawler works.
+ * 
+ * @author markkingsbury
+ */
 public class CrawlerScript {
 	
 	public static void main (String[] args) {

@@ -1,8 +1,9 @@
 import java.net.URL;
 
 /**
+ * Example of how a future programmer would structure things so can add a search() method to existing set-up
+ * 
  * @author markkingsbury
- *
  */
 
 public class FutureProgrammersWebCrawler extends WebCrawler implements WebCrawlerInterface {

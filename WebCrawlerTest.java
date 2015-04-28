@@ -17,6 +17,11 @@ import org.junit.rules.ExpectedException;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNull;
 
+/**
+ * JUnit testing files for WebCrawler application CW5
+ * 
+ * @author markkingsbury
+ */
 public class WebCrawlerTest {
 
 	private static final String TEMP_FILE = "./Data/crawltemp.txt";
