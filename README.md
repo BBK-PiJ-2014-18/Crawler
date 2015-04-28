@@ -8,7 +8,7 @@ JavaDoc (and maybe an extra interface or two).
 The content of this readme...
 
 
-<p>Note on file structure: </p>
+#####Note on file structure:
 
 <li>Class files go in a directory called Crawler.</li>
 
