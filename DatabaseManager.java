@@ -12,22 +12,39 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 
-public class DatabaseManager {
+/**
+ * @author markkingsbury
+ *
+ */
+public class DatabaseManager implements DatabaseManagerInterface {
 	
-	private static final String TEMP_FILE = "./Crawler/Data/crawltemp.txt";
-	private static final String ATTRIBUTES_FILE = "./Crawler/Data/crawlattributes.txt";
-	private static final String SEARCH_RESULT_DIRECTORY = "./Crawler/Data/";
+	/**
+	 * 
+	 */
+	private static final String TEMP_FILE = "./Data/crawltemp.txt";
+	private static final String ATTRIBUTES_FILE = "./Data/crawlattributes.txt";
+
+	private static final String SEARCH_RESULT_DIRECTORY = "./Data/";
 	
+	/**
+	 * @param outputFileName
+	 */
 	public DatabaseManager(String outputFileName) {
 		setUpDataFiles(outputFileName);
 	}
 	
+	/**
+	 * @param outputFileName
+	 */
 	private void setUpDataFiles(String outputFileName) {
-		makeDirectory("./Crawler/Data");
+		makeDirectory("./Data");
 		deleteFileIfExists(TEMP_FILE);
 		deleteFileIfExists(SEARCH_RESULT_DIRECTORY + outputFileName);
 	}
 	
+	/**
+	 * @param fileToDelete
+	 */
 	private void deleteFileIfExists(String fileToDelete) {
 		Path p = Paths.get(fileToDelete);
 		try {
@@ -37,11 +54,15 @@ public class DatabaseManager {
 		}		
 	}
  	
+	/**
+	 * @param dirName
+	 */
 	private void makeDirectory(String dirName) {
 		File f = new File(dirName);
 		f.mkdir();
 	}
 	
+
 	public void saveCrawlAttributes (URL startingURL, URL base) {
 		PrintWriter out = null;
 		File file = new File(ATTRIBUTES_FILE);
@@ -171,6 +192,9 @@ public class DatabaseManager {
 		return result;
 	}
 	
+	/**
+	 * @param reader
+	 */
 	private void closeReader(Reader reader) {
 		try {
 			if (reader != null) {

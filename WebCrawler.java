@@ -4,10 +4,14 @@ import java.net.URL;
 import java.util.HashSet;
 import java.util.Set;
 
+/**
+ * @author markkingsbury
+ *
+ */
 public class WebCrawler implements WebCrawlerInterface {
 	
-	private static final int DEFAULT_MAX_LINKS = 200;
-	private static final int DEFAULT_MAX_DEPTH = 20;
+	private static final int DEFAULT_MAX_LINKS = 20;
+	private static final int DEFAULT_MAX_DEPTH = 15;
 	
 	private DatabaseManager dm;
 	private URLmanipulator um;
@@ -17,6 +21,9 @@ public class WebCrawler implements WebCrawlerInterface {
 	private int maxDepth;
 	private Set<String> protocolsToIndex;
 	
+	/**
+	 * 
+	 */
 	public WebCrawler() {
 		this.um = new URLmanipulator();
 		this.countLinks = 1;
@@ -26,18 +33,25 @@ public class WebCrawler implements WebCrawlerInterface {
 		setProtocolsToIndex();
 	}
 
+	/**
+	 * @param maxLinks
+	 * @param maxDepth
+	 */
 	public WebCrawler(int maxLinks, int maxDepth) {
 		this.um = new URLmanipulator();
 		this.countLinks = 1;
 		this.countDepth = 0;
-		if (maxLinks < 0 || maxDepth < 0) {
-			throw new IllegalArgumentException("Argument must be positive");
+		if (maxLinks < 1 || maxDepth < 0) {
+			throw new IllegalArgumentException("maxLinks must be 1 or more, maxDepth must be 0 or more");
 		}
 		this.maxLinks = maxLinks;
 		this.maxDepth = maxDepth;
 		setProtocolsToIndex();
 	}
 	
+	/**
+	 * 
+	 */
 	private void setProtocolsToIndex() {
 		this.protocolsToIndex = new HashSet<String>();
 		protocolsToIndex.add("http");
@@ -64,15 +78,21 @@ public class WebCrawler implements WebCrawlerInterface {
 			dm.writeToSearchResultsFile(currentPageURL, outputFileName);	
 		}
 		URL nextURL = null;	
+		
 		if(countLinks < maxLinks) {
 			nextURL = dm.getNextURL(maxDepth);
+			countLinks++;
 		}
 		if(nextURL != null) {
 			crawl(nextURL, outputFileName);
 		}
-		return;
+	
 	}
 	
+	/**
+	 * @param pageToScrape
+	 * @param base
+	 */
 	private void scrapePage(URL pageToScrape, URL base) {
 		InputStream inputStream = null;
 		try {
@@ -98,13 +118,7 @@ public class WebCrawler implements WebCrawlerInterface {
 					scrapedURL = um.standardizeURL(scrapedURL);
 				}
 				if (scrapedURL != null) {
-					if(countLinks <= maxLinks) {
-						if (dm.writeURLtoTemp(countDepth, scrapedURL)) {
-							countLinks++;				
-						}
-					} else {
-						return;
-					}
+					dm.writeURLtoTemp(countDepth, scrapedURL);
 				}
 			}
 		} catch (IOException e) {
@@ -114,6 +128,11 @@ public class WebCrawler implements WebCrawlerInterface {
 		}
 	}
 	
+	/**
+	 * @param inputStream
+	 * @param checkFor
+	 * @return
+	 */
 	private String findURL(InputStream inputStream, String checkFor) {
 		HTMLread hr = new HTMLread();
 		boolean matchPossible = false;
@@ -138,6 +157,10 @@ public class WebCrawler implements WebCrawlerInterface {
 		return hr.readString(inputStream, '"', (char) -1); 
 	}
 	
+	/**
+	 * @param candidateURL
+	 * @return
+	 */
 	private URL filterURL(URL candidateURL) {
 		String protocol = candidateURL.getProtocol();
 		if(!protocolsToIndex.contains(protocol)) {
@@ -146,6 +169,9 @@ public class WebCrawler implements WebCrawlerInterface {
 		return candidateURL;
 	}
 	
+	/**
+	 * @param inputStream
+	 */
 	private void closeInputStream(InputStream inputStream) {
 		if(inputStream != null) {
 			try {

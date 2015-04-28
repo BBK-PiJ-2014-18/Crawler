@@ -9,9 +9,13 @@ import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URL;
 
-public class URLmanipulator {
+/**
+ * @author markkingsbury
+ *
+ */
+public class URLmanipulator implements URLmanipulatorInterface {
 
-	private static final String ATTRIBUTES_FILE = "./Crawler/Data/crawlattributes.txt";
+	private static final String ATTRIBUTES_FILE = "./Data/crawlattributes.txt";
 
 	public URL makeBase(URL startingURL) {
 		String protocol = startingURL.getProtocol(); 	// e.g. "http"
@@ -30,6 +34,11 @@ public class URLmanipulator {
 		return result;
 	}	
 
+	/**
+	 * @param file
+	 * @param diagURL
+	 * @return
+	 */
 	private String addFinalForwardSlash(String file, URL diagURL) {
 		//if there is no file (e.g file = "" so address is just host)
 		if(file == "") {
@@ -69,6 +78,10 @@ public class URLmanipulator {
 	}
 	
 	//remove any  duplicate "/"s that have got in
+	/**
+	 * @param dirtyURL
+	 * @return
+	 */
 	private URL normalizeURL(URL dirtyURL) {
 		URL result = null;
 		URL noSpacesURL = fixSpacesURL(dirtyURL);
@@ -85,6 +98,10 @@ public class URLmanipulator {
 		return result;
 	}
 	
+	/**
+	 * @param dirtyURL
+	 * @return
+	 */
 	private URL fixSpacesURL(URL dirtyURL) {
 		URL result = null;
 		String strWithSpaces = dirtyURL.toString();
