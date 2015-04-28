@@ -18,11 +18,11 @@ The content of this readme...
 
 So the base directory Crawler contains:
 
-The class files
+(a) The class files
 
-A directory: Data (where output files are go)
+(b) A directory: Data (where output files are found)
 
-A directory: Crawler, which contains a directory TestHtml (which contains the 11 test html files).
+(c) A directory: Crawler, which contains a directory TestHtml (which contains the 11 test html files).
 
 
 
