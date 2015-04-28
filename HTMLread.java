@@ -3,8 +3,9 @@ import java.io.InputStream;
 import java.lang.Character;
 
 /**
+ * An implementation of HTMLreaderInterface to help with parsing HTML elements
+ * 
  * @author markkingsbury
- *
  */
 public class HTMLread implements HTMLreadInterface {
 	

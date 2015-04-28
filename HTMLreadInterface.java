@@ -1,6 +1,11 @@
 import java.io.InputStream;
 
 
+/**
+ * An interface to specify methods that will help parse HTML.
+ * 
+ * @author markkingsbury
+ */
 public interface HTMLreadInterface {
 
 	/**

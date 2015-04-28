@@ -10,8 +10,9 @@ import java.net.URISyntaxException;
 import java.net.URL;
 
 /**
+ * An instance of URLmanipulatorInterface, that helps structure and normalise URLs.
+ * 
  * @author markkingsbury
- *
  */
 public class URLmanipulator implements URLmanipulatorInterface {
 
